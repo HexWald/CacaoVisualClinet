@@ -78,7 +78,7 @@ public class CoralMod implements ModInitializer {
 
             new CoralModCommand();
 
-            LOGGER.info("Successfully started {}", MOD_NAME);
+            LOGGER.info("Successfully initialized {}", MOD_NAME);
         });
 
         KeyPressedEvent.KEY_PRESSED_EVENT.register(key -> {
