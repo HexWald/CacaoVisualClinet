@@ -28,17 +28,32 @@ public class TitleScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     public void onInit(CallbackInfo info) {
-        addRenderableWidget(RenderUtils.pressableText(font, Component.literal("CoralMod on Github"), 20, (LOGO_SIZE - font.lineHeight) / 2 + 2, () -> {
-            try {
-                Util.getPlatform().openUri(new URI(GITHUB_REPO));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }));
+        final int logoX = 2;
+        final int logoY = 2;
+        final int logoSize = LOGO_SIZE;
+
+        final int textX = logoX + logoSize + 2;
+        final int textY = logoY + (logoSize - font.lineHeight) / 2 + 2;
+
+        addRenderableWidget(RenderUtils.pressableText(
+                font,
+                Component.literal("CoralMod on Github"),
+                textX,
+                textY,
+                () -> {
+                    try {
+                        Util.getPlatform().openUri(new URI(GITHUB_REPO));
+                    } catch (Exception e) {
+                        CoralMod.LOGGER.error("Failed to open GitHub page", e);
+                    }
+                }
+        ));
     }
 
     @Inject(method = "render", at = @At("HEAD"))
     private void onRender(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo info) {
+        RenderUtils.drawTexture(guiGraphics, GITHUB_LOGO, 2, 2, LOGO_SIZE);
+
         guiGraphics.drawString(
                 font,
                 CoralMod.MOD_NAME + " v" + CoralMod.MOD_VERSION,
@@ -47,7 +62,5 @@ public class TitleScreenMixin extends Screen {
                 -1,
                 true
         );
-
-        RenderUtils.drawTexture(guiGraphics, GITHUB_LOGO, 0, 0, LOGO_SIZE);
     }
 }
