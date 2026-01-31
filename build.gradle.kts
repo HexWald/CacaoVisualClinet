@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.loom)
 }
 
-version = "0.6.0"
+version = "0.7.0"
 group = "net.coralmod.mod"
 
 dependencies {
@@ -16,6 +16,8 @@ dependencies {
     annotationProcessor(libs.lombok)
 
     implementation(libs.gson)
+
+    implementation("net.raphimc:MinecraftAuth:5.0.0")
 }
 
 tasks.processResources {

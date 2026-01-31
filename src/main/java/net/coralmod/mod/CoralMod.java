@@ -28,7 +28,7 @@ public class CoralMod implements ModInitializer {
 
     public static final String MOD_ID = "coralmod";
     public static final String MOD_NAME = "CoralMod";
-    public static final String MOD_VERSION = "0.6.0";
+    public static final String MOD_VERSION = "0.7.0";
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
@@ -90,7 +90,7 @@ public class CoralMod implements ModInitializer {
                 Minecraft.getInstance().setScreen(ModMenuScreen.INSTANCE);
             }
 
-            if (key ==  KeyBindingHelper.getBoundKeyOf(HUD_EDITOR_KEY_MAPPING).getValue()) {
+            if (key == KeyBindingHelper.getBoundKeyOf(HUD_EDITOR_KEY_MAPPING).getValue()) {
                 Minecraft.getInstance().setScreen(EditHudScreen.INSTANCE);
             }
         });
