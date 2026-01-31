@@ -11,9 +11,10 @@ public class ConfigStorage {
 
     public Config load() {
         Config config = JsonUtils.loadFromJson(CONFIG_FILE, Config.class);
+
         if (config == null) {
             config = new Config();
-            CONFIG_FILE.mkdirs();
+            CONFIG_FILE.getParentFile().mkdirs();
             save(config);
         }
 
@@ -21,6 +22,8 @@ public class ConfigStorage {
             CoralMod.LOGGER.warn("Config version does not match the expected version! Expected {}, got {}", Config.VERSION, config.getVersion());
         }
 
+        config.setVersion(Config.VERSION);
+        save(config);
         return config;
     }
 
