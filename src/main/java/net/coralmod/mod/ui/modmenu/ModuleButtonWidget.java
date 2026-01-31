@@ -38,8 +38,9 @@ public class ModuleButtonWidget extends Widget {
         int borderColor = baseGray.brighter().getRGB();
 
         if (module.isEnabled()) {
-            borderColor = theme.getPrimaryColor().getRGB();
             final Color themeColor = ColorUtils.setAlpha(theme.getPrimaryColor(), 100);
+
+            borderColor = theme.getPrimaryColor().getRGB();
             backgroundColor = ColorUtils.blendColors(baseGray, themeColor).getRGB();
         }
 

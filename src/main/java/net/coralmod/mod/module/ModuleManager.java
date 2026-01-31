@@ -14,6 +14,7 @@ public class ModuleManager {
         register(new ClockModule());
         register(new CoordinatesModule());
         register(new CPSModule());
+        register(new ScoreboardModule());
         register(new FpsModule());
         register(new FullBrightModule());
         register(new NametagsModule());
