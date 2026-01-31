@@ -2,29 +2,27 @@ package net.coralmod.mod.module;
 
 import net.coralmod.mod.module.modules.*;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ModuleManager {
 
-    private final Map<Class<? extends Module>, Module> modules = new HashMap<>();
+    private final Map<Class<? extends Module>, Module> modules = new LinkedHashMap<>();
 
     public ModuleManager() {
-        register(new FpsModule());
-        register(new NametagsModule());
-        register(new FullBrightModule());
-        register(new ZoomModule());
+        register(new ArmorHudModule());
+        register(new AutoGGModule());
+        register(new ClockModule());
         register(new CoordinatesModule());
         register(new CPSModule());
-        register(new ViewTweaksModule());
-        register(new ArmorHudModule());
+        register(new FpsModule());
+        register(new FullBrightModule());
+        register(new NametagsModule());
         register(new NoBackgroundModule());
         register(new PingModule());
         register(new ServerAddressModule());
-        register(new ClockModule());
-        register(new AutoGGModule());
+        register(new ViewTweaksModule());
+        register(new ZoomModule());
+
     }
 
     private void register(Module module) {
