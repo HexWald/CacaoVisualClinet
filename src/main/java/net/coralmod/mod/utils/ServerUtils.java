@@ -1,7 +1,6 @@
 package net.coralmod.mod.utils;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import lombok.experimental.UtilityClass;
 import net.coralmod.mod.mixin.accessors.MinecraftServerAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.FaviconTexture;
@@ -11,12 +10,22 @@ import net.minecraft.resources.Identifier;
 
 import java.util.Optional;
 
-@UtilityClass
-public class ServerIconUtil {
+public final class ServerUtils {
 
     private static final Identifier MISSING_LOCATION = Identifier.withDefaultNamespace("textures/misc/unknown_server.png");
 
-    public Identifier getServerIcon() {
+    private ServerUtils() {
+    }
+
+    public static String getCurrentServerIp() {
+        final Minecraft mc = Minecraft.getInstance();
+        if (mc.getCurrentServer() == null) {
+            return null;
+        }
+        return mc.getCurrentServer().ip.toLowerCase();
+    }
+
+    public static Identifier getServerIcon() {
         final Minecraft mc = Minecraft.getInstance();
 
         if (mc.isSingleplayer()) {
@@ -45,7 +54,7 @@ public class ServerIconUtil {
         return uploadIcon(icon, server.getIconBytes());
     }
 
-    private Identifier uploadIcon(FaviconTexture icon, byte[] iconBytes) {
+    private static Identifier uploadIcon(FaviconTexture icon, byte[] iconBytes) {
         try (NativeImage image = NativeImage.read(iconBytes)) {
             icon.upload(image);
             return icon.textureLocation();

@@ -5,7 +5,7 @@ import net.coralmod.mod.module.ModuleInfo;
 import net.coralmod.mod.module.settings.BooleanSetting;
 import net.coralmod.mod.module.settings.NumberSetting;
 import net.coralmod.mod.utils.RenderUtils;
-import net.coralmod.mod.utils.ServerIconUtil;
+import net.coralmod.mod.utils.ServerUtils;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -29,13 +29,13 @@ public class ServerAddressModule extends HudModule {
 
         ClientPlayConnectionEvents.JOIN.register((clientPacketListener, packetSender, minecraft) -> {
             // Update the server icon after joining a new server
-            currentServerIcon = ServerIconUtil.getServerIcon();
+            currentServerIcon = ServerUtils.getServerIcon();
         });
     }
 
     @Override
     public void onEnable() {
-        currentServerIcon = ServerIconUtil.getServerIcon();
+        currentServerIcon = ServerUtils.getServerIcon();
     }
 
     @Override
