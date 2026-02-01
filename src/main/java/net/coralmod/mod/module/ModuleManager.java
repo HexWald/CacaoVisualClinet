@@ -10,6 +10,7 @@ public class ModuleManager {
 
     public ModuleManager() {
         register(new ArmorHudModule());
+        register(new AspectModule());
         register(new AutoGGModule());
         register(new ClockModule());
         register(new CoordinatesModule());

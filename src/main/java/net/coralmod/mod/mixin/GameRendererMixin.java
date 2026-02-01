@@ -1,6 +1,7 @@
 package net.coralmod.mod.mixin;
 
 import net.coralmod.mod.CoralMod;
+import net.coralmod.mod.module.modules.AspectModule;
 import net.coralmod.mod.module.modules.ZoomModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -13,6 +14,7 @@ import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameRenderer.class)
@@ -54,5 +56,22 @@ public abstract class GameRendererMixin {
         if (module.isEnabled() && module.isZooming()) {
             info.cancel();
         }
+    }
+
+    @ModifyArg(
+            method = "getProjectionMatrix",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lorg/joml/Matrix4f;perspective(FFFF)Lorg/joml/Matrix4f;",
+                    ordinal = 0
+            ),
+            index = 1
+    )
+    private float modifyStretchFactor(float f) {
+        final AspectModule module = CoralMod.getInstance().getModuleManager().getModule(AspectModule.class);
+        if (module == null || !module.isEnabled()) {
+            return f;
+        }
+        return f / (float) module.getStretchFactor();
     }
 }
