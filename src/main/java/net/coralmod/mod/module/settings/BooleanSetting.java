@@ -6,7 +6,7 @@ import com.google.gson.JsonPrimitive;
 public class BooleanSetting extends Setting<Boolean> {
 
     public BooleanSetting(String name, boolean defaultValue) {
-        super(name, defaultValue, defaultValue);
+        super(name, defaultValue);
     }
 
     @Override

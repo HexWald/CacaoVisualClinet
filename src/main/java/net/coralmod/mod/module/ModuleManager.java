@@ -24,7 +24,6 @@ public class ModuleManager {
         register(new ServerAddressModule());
         register(new ViewTweaksModule());
         register(new ZoomModule());
-
     }
 
     private void register(Module module) {

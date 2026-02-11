@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ScreenMixin {
 
     @Inject(method = "renderBackground", at = @At("HEAD"), cancellable = true)
-    public void onRenderBackground(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo info) {
+    public void removeBackground(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo info) {
         if (!CoralMod.getInstance().getModuleManager().getModule(NoBackgroundModule.class).isEnabled()) {
             return;
         }
