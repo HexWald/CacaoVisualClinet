@@ -5,7 +5,6 @@ import net.coralmod.mod.command.CoralModCommand;
 import net.coralmod.mod.config.Config;
 import net.coralmod.mod.config.ConfigManager;
 import net.coralmod.mod.config.ConfigStorage;
-import net.coralmod.mod.config.profile.Profile;
 import net.coralmod.mod.config.profile.ProfileManager;
 import net.coralmod.mod.config.profile.ProfileStorage;
 import net.coralmod.mod.event.KeyPressedEvent;
@@ -99,17 +98,21 @@ public class CoralMod implements ModInitializer {
             LOGGER.info("Shutting down...");
             LOGGER.info("Saving modules...");
 
-            profileManager.saveCurrentProfile();
-            configManager.save();
+            save();
         }));
+    }
+
+
+    /**
+     * Saves the current profile, including module states, positions, and the config settings.
+     */
+    public void save() {
+        profileManager.saveCurrentProfile();
+        configManager.save();
     }
 
     public Config getConfig() {
         return configManager.getConfig();
-    }
-
-    public Profile getCurrentProfile() {
-        return profileManager.getCurrentProfile();
     }
 
     public void setSelectedTheme(Theme selectedTheme) {

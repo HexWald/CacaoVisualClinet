@@ -42,6 +42,12 @@ public class Module {
         }
     }
 
+    public void reset() {
+        for (Setting<?> setting : getSettings()) {
+            setting.reset();
+        }
+    }
+
     public void addSettings(Setting<?>... settings) {
         this.settings.addAll(Arrays.asList(settings));
     }

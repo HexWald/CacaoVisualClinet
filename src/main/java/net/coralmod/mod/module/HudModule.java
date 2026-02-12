@@ -21,7 +21,7 @@ public abstract class HudModule extends Module {
     private int height;
 
     protected BooleanSetting background = new BooleanSetting("Background", false);
-    protected BooleanSetting brackets = new BooleanSetting("Brackets", true);
+    protected BooleanSetting brackets = new BooleanSetting("Text Brackets", true);
     protected BooleanSetting textShadow = new BooleanSetting("Text Shadow", true);
 
     public HudModule(int x, int y) {
@@ -75,7 +75,10 @@ public abstract class HudModule extends Module {
         this.y = y;
     }
 
-    public void resetPosition() {
+    @Override
+    public void reset() {
+        super.reset();
+
         move(20, 20);
     }
 }

@@ -1,6 +1,5 @@
 package net.coralmod.mod.ui.modmenu;
 
-import net.coralmod.mod.module.HudModule;
 import net.coralmod.mod.module.Module;
 import net.coralmod.mod.module.settings.BooleanSetting;
 import net.coralmod.mod.module.settings.ModeSetting;
@@ -191,13 +190,7 @@ public class ModuleSettingsWindow extends Window {
         }
 
         if (hoverReset) {
-            for (Setting<?> setting : module.getSettings()) {
-                setting.reset();
-            }
-
-            if (module instanceof HudModule hudModule) {
-                hudModule.resetPosition();
-            }
+            module.reset();
         }
     }
 }

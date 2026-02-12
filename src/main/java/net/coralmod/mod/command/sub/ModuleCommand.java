@@ -1,4 +1,4 @@
-package net.coralmod.mod.command;
+package net.coralmod.mod.command.sub;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;

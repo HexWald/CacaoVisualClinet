@@ -14,6 +14,10 @@ public class Config {
     private String selectedTheme;
 
     public Config() {
+        setDefaultValues();
+    }
+
+    public void setDefaultValues() {
         this.version = VERSION;
         this.currentProfile = "Default";
         this.selectedTheme = "TUBE";
