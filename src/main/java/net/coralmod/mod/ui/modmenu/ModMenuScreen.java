@@ -16,7 +16,6 @@ import java.awt.*;
 public class ModMenuScreen extends Screen {
 
     private final Minecraft mc = Minecraft.getInstance();
-    public static final ModMenuScreen INSTANCE = new ModMenuScreen();
 
     public static final int MENU_WIDTH = 400;
     public static int MENU_HEIGHT = 200;
@@ -35,7 +34,7 @@ public class ModMenuScreen extends Screen {
 
     private Window currentWindow;
 
-    protected ModMenuScreen() {
+    public ModMenuScreen() {
         super(Component.literal("Mod Menu"));
     }
 
@@ -44,7 +43,7 @@ public class ModMenuScreen extends Screen {
         startX = (mc.screen.width - MENU_WIDTH) / 2;
         startY = (mc.screen.height - MENU_HEIGHT) / 2;
 
-        setModuleTabWindow();
+        switchToModulesTab();
 
         final int textSpacing = 10;
         final String modsText = "Mods";
@@ -55,16 +54,29 @@ public class ModMenuScreen extends Screen {
         final int startButtonX = startX + (MENU_WIDTH - totalWidth) / 2;
         final int buttonY = startY + 15;
 
-        addRenderableWidget(RenderUtils.pressableText(font, Component.literal(modsText),
-                startButtonX, buttonY, this::setModuleTabWindow));
+        addRenderableWidget(RenderUtils.pressableText(
+                font,
+                Component.literal(modsText),
+                startButtonX,
+                buttonY,
+                this::switchToModulesTab
+        ));
 
-        addRenderableWidget(RenderUtils.pressableText(font, Component.literal(themesText),
-                startButtonX + font.width(modsText) + textSpacing, buttonY, () ->
-                        switchWindow(new ThemesTabWindow(this, "Themes", startX, startY + MENU_TITLE_BAR_HEIGHT))));
+        addRenderableWidget(RenderUtils.pressableText(
+                font,
+                Component.literal(themesText),
+                startButtonX + font.width(modsText) + textSpacing,
+                buttonY,
+                () -> switchWindow(new ThemesTabWindow(this, "Themes", startX, startY + MENU_TITLE_BAR_HEIGHT)))
+        );
 
-        addRenderableWidget(RenderUtils.pressableText(font, Component.literal(profilesText),
-                startButtonX + font.width(modsText) + textSpacing + font.width(themesText) + textSpacing, buttonY,
-                () -> System.out.println("Profiles clicked")));
+        addRenderableWidget(RenderUtils.pressableText(
+                font,
+                Component.literal(profilesText),
+                startButtonX + font.width(modsText) + textSpacing + font.width(themesText) + textSpacing,
+                buttonY,
+                () -> System.out.println("Profiles clicked"))
+        );
     }
 
     @Override
@@ -73,8 +85,16 @@ public class ModMenuScreen extends Screen {
 
         guiGraphics.renderItem(new ItemStack(CoralMod.getInstance().getSelectedTheme().getDisplayItem()), startX + 10, startY + 10);
 
-        RenderUtils.scaledText(guiGraphics.pose(), guiGraphics,
-                "CoralMod", startX + mc.font.width("CoralMod") - 10, startY + 15, 1.35f, -1, true);
+        RenderUtils.scaledText(
+                guiGraphics.pose(),
+                guiGraphics,
+                "CoralMod",
+                startX + mc.font.width("CoralMod") - 10,
+                startY + 15,
+                1.35f,
+                -1,
+                true
+        );
 
         currentWindow.render(guiGraphics, mouseX, mouseY);
         super.render(guiGraphics, mouseX, mouseY, f);
@@ -98,7 +118,7 @@ public class ModMenuScreen extends Screen {
         return super.mouseScrolled(x, y, scrollX, scrollY);
     }
 
-    public void setModuleTabWindow() {
+    public void switchToModulesTab() {
         switchWindow(new ModulesTabWindow(this, "Modules", startX, startY + MENU_TITLE_BAR_HEIGHT));
     }
 

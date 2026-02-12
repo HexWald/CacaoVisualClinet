@@ -2,6 +2,7 @@ package net.coralmod.mod.ui.modmenu.setting;
 
 import net.coralmod.mod.CoralMod;
 import net.coralmod.mod.module.settings.NumberSetting;
+import net.coralmod.mod.theme.Theme;
 import net.coralmod.mod.ui.Widget;
 import net.coralmod.mod.ui.modmenu.ModMenuScreen;
 import net.minecraft.client.Minecraft;
@@ -32,12 +33,19 @@ public class NumberSettingWidget extends Widget {
         super.render(guiGraphics, mouseX, mouseY, scrollOffset);
         updateValue(mouseX);
 
+        final Color baseGray = ModMenuScreen.BASE_GRAY;
+        final Theme theme = CoralMod.getInstance().getSelectedTheme();
+
         final double renderWidth = (double) (width) * (setting.getValue() - setting.getMin()) / (setting.getMax() - setting.getMin());
 
-        final Color baseGray = ModMenuScreen.BASE_GRAY;
-
         guiGraphics.fillGradient(x, y, x + width, y + height, baseGray.getRGB(), baseGray.darker().getRGB());
-        guiGraphics.fillGradient(x, y, (int) (x + renderWidth), y + height, CoralMod.getInstance().getSelectedTheme().getPrimaryColor().getRGB(), CoralMod.getInstance().getSelectedTheme().getSecondaryColor().getRGB());
+        guiGraphics.fillGradient(x,
+                y,
+                (int) (x + renderWidth),
+                y + height,
+                theme.getPrimaryColor().getRGB(),
+                theme.getSecondaryColor().getRGB()
+        );
 
         if (hovered) {
             guiGraphics.fill(x, y, x + width, y + height, ModMenuScreen.HOVER_COLOR.getRGB());

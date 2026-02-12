@@ -27,11 +27,8 @@ public class ThemeButtonWidget extends Widget {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, int scrollOffset) {
         super.render(guiGraphics, mouseX, mouseY, scrollOffset);
 
-        final Color baseGray = ModMenuScreen.BASE_GRAY;
-
         int borderColor = theme.getPrimaryColor().getRGB();
-        final Color themeColor = ColorUtils.setAlpha(theme.getPrimaryColor(), 100);
-        int backgroundColor = ColorUtils.blendColors(baseGray, themeColor).getRGB();
+        int backgroundColor = ColorUtils.blendColors(ModMenuScreen.BASE_GRAY, ColorUtils.modifyAlpha(theme.getPrimaryColor(), 100)).getRGB();
 
         if (hovered) {
             backgroundColor = ColorUtils.blendColors(new Color(backgroundColor, true), ModMenuScreen.HOVER_COLOR).getRGB();
@@ -39,13 +36,26 @@ public class ThemeButtonWidget extends Widget {
         }
 
         guiGraphics.fill(x, y, x + width, y + height, borderColor);
-        guiGraphics.fill(x + BORDER_THICKNESS, y + BORDER_THICKNESS, x + width - BORDER_THICKNESS, y + height - BORDER_THICKNESS, backgroundColor);
+        guiGraphics.fill(
+                x + BORDER_THICKNESS,
+                y + BORDER_THICKNESS,
+                x + width - BORDER_THICKNESS,
+                y + height - BORDER_THICKNESS,
+                backgroundColor
+        );
+
+        RenderUtils.scaledItem(
+                guiGraphics.pose(),
+                guiGraphics,
+                theme.getDisplayItem(),
+                x + width / 2,
+                y + height / 2,
+                2
+        );
 
         final Font font = Minecraft.getInstance().font;
-
-        RenderUtils.scaledItem(guiGraphics.pose(), guiGraphics, theme.getDisplayItem(), x + width / 2, y + height / 2, 2);
-
-        guiGraphics.drawString(font,
+        guiGraphics.drawString(
+                font,
                 theme.getName(),
                 x + width / 2 - font.width(theme.getName()) / 2,
                 y + height - (BORDER_THICKNESS * 2) - 10,
@@ -58,6 +68,7 @@ public class ThemeButtonWidget extends Widget {
     @Override
     public void mouseClicked(MouseButtonEvent event) {
         CoralMod.getInstance().setSelectedTheme(theme);
+
         Notification.sendNotification("Updated Theme", "Theme was updated to: " + theme.getName());
     }
 }

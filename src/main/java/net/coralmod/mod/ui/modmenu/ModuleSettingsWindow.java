@@ -109,11 +109,11 @@ public class ModuleSettingsWindow extends Window {
         );
 
         Color backColor = ModMenuScreen.BASE_GRAY;
-        Color resetColor = new Color(160, 70, 70, 200);
         if (hoverBack) {
             backColor = ColorUtils.blendColors(new Color(backColor.getRGB(), true), ModMenuScreen.HOVER_COLOR);
         }
 
+        Color resetColor = new Color(160, 70, 70, 200);
         if (hoverReset) {
             resetColor = ColorUtils.blendColors(new Color(resetColor.getRGB(), true), ModMenuScreen.HOVER_COLOR);
         }
@@ -187,7 +187,7 @@ public class ModuleSettingsWindow extends Window {
         );
 
         if (hoverBack) {
-            parent.setModuleTabWindow();
+            parent.switchToModulesTab();
         }
 
         if (hoverReset) {

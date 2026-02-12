@@ -15,7 +15,7 @@ public class ColorUtils {
         return new Color(r, g, b, base.getAlpha());
     }
 
-    public Color setAlpha(Color color, int alpha) {
+    public Color modifyAlpha(Color color, int alpha) {
         return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
     }
 

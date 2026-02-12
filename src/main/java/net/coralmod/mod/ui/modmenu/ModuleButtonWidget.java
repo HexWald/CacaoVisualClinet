@@ -38,7 +38,7 @@ public class ModuleButtonWidget extends Widget {
         int borderColor = baseGray.brighter().getRGB();
 
         if (module.isEnabled()) {
-            final Color themeColor = ColorUtils.setAlpha(theme.getPrimaryColor(), 100);
+            final Color themeColor = ColorUtils.modifyAlpha(theme.getPrimaryColor(), 100);
 
             borderColor = theme.getPrimaryColor().getRGB();
             backgroundColor = ColorUtils.blendColors(baseGray, themeColor).getRGB();
@@ -50,33 +50,67 @@ public class ModuleButtonWidget extends Widget {
         }
 
         guiGraphics.fill(x, renderY, x + width, renderY + height, borderColor);
-        guiGraphics.fill(x + BORDER_THICKNESS, renderY + BORDER_THICKNESS, x + width - BORDER_THICKNESS, renderY + height - BORDER_THICKNESS, backgroundColor);
+        guiGraphics.fill(
+                x + BORDER_THICKNESS,
+                renderY + BORDER_THICKNESS,
+                x + width - BORDER_THICKNESS,
+                renderY + height - BORDER_THICKNESS,
+                backgroundColor
+        );
 
         final Font font = Minecraft.getInstance().font;
 
         final int toggleY = renderY + height - BUTTON_HEIGHT * 2 - 10;
         final int settingY = renderY + height - BUTTON_HEIGHT - 5;
 
-        final boolean isHoveringToggle = MouseUtils.isMouseOver(mouseX, mouseY, x, toggleY, width, BUTTON_HEIGHT);
-        final boolean isHoveringSettings = MouseUtils.isMouseOver(mouseX, mouseY, x, settingY, width, BUTTON_HEIGHT);
+        final boolean hoveringToggle = MouseUtils.isMouseOver(mouseX, mouseY, x, toggleY, width, BUTTON_HEIGHT);
+        final boolean hoveringSettings = MouseUtils.isMouseOver(mouseX, mouseY, x, settingY, width, BUTTON_HEIGHT);
 
         final Color buttonBackgroundColor = ColorUtils.removeAlpha(baseGray).brighter().brighter();
         final Color buttonHoverColor = buttonBackgroundColor.brighter().brighter();
 
-        final Color toggleButtonColor = isHoveringToggle ? buttonHoverColor : buttonBackgroundColor;
-        final Color settingsButtonColor = isHoveringSettings ? buttonHoverColor : buttonBackgroundColor;
+        final Color toggleButtonColor = hoveringToggle ? buttonHoverColor : buttonBackgroundColor;
+        final Color settingsButtonColor = hoveringSettings ? buttonHoverColor : buttonBackgroundColor;
 
-        guiGraphics.fillGradient(x + BUTTON_PADDING, toggleY, x + width - BUTTON_PADDING, toggleY + BUTTON_HEIGHT, toggleButtonColor.getRGB(), toggleButtonColor.darker().getRGB());
-        guiGraphics.fillGradient(x + BUTTON_PADDING, settingY, x + width - BUTTON_PADDING, settingY + BUTTON_HEIGHT, settingsButtonColor.getRGB(), settingsButtonColor.darker().getRGB());
+        // toggle button background
+        guiGraphics.fillGradient(
+                x + BUTTON_PADDING,
+                toggleY,
+                x + width - BUTTON_PADDING,
+                toggleY + BUTTON_HEIGHT,
+                toggleButtonColor.getRGB(),
+                toggleButtonColor.darker().getRGB()
+        );
+
+        // settings button background
+        guiGraphics.fillGradient(
+                x + BUTTON_PADDING,
+                settingY,
+                x + width - BUTTON_PADDING,
+                settingY + BUTTON_HEIGHT,
+                settingsButtonColor.getRGB(),
+                settingsButtonColor.darker().getRGB()
+        );
 
         final String toggleText = module.isEnabled() ? "Disable" : "Enable";
         final String settingsText = "Settings";
 
-        guiGraphics.drawString(font, toggleText,
-                x + width / 2 - font.width(toggleText) / 2, toggleY + 4, -1, true);
+        guiGraphics.drawString(
+                font,
+                toggleText,
+                x + width / 2 - font.width(toggleText) / 2,
+                toggleY + 4,
+                -1,
+                true
+        );
 
-        guiGraphics.drawString(font, settingsText,
-                x + width / 2 - font.width(settingsText) / 2, settingY + 4, -1, true);
+        guiGraphics.drawString(font,
+                settingsText,
+                x + width / 2 - font.width(settingsText) / 2,
+                settingY + 4,
+                -1,
+                true
+        );
 
         final int textX = x + width / 2 - font.width(module.getName()) / 2;
         final int textY = renderY + BORDER_THICKNESS + (toggleY - (renderY + BORDER_THICKNESS) - font.lineHeight) / 2;
