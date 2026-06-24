@@ -1,0 +1,26 @@
+{
+  "required": true,
+  "package": "net.cacaovisualclient.mod.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "mixins": [
+    "GameRendererMixin",
+    "GuiMixin",
+    "KeyboardHandlerMixin",
+    "LivingEntityRendererMixin",
+    "MinecraftMixin",
+    "MouseHandlerMixin",
+    "TitleScreenMixin",
+    "UnitDoubleMixin",
+    "ItemInHandRendererMixin",
+    "ScreenEffectRendererMixin",
+    "ScreenMixin",
+    "accessors.MinecraftServerAccessor",
+    "ChatComponentMixin"
+  ]
+}

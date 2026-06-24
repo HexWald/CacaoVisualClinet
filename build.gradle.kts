@@ -4,7 +4,7 @@ plugins {
 }
 
 version = "0.8.0"
-group = "net.coralmod.mod"
+group = "net.cacaovisualclient.mod"
 
 dependencies {
     minecraft(libs.minecraft)
@@ -29,11 +29,4 @@ java {
     withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
-}
-
-tasks.processResources {
-    inputs.property("version", project.version)
-    filesMatching("fabric.mod.json") {
-        expand("version" to project.version)
-    }
 }

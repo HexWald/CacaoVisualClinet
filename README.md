@@ -1,13 +1,13 @@
-# CoralMod
+# CacaoVisualClient
 
-CoralMod is a Fabric-based, open source Minecraft PvP client for the latest Minecraft versions.
+CacaoVisualClient is an open-source Fabric PvP and visual client for Minecraft 1.21.11.
 
-<sub> This is a small fun project and is not actively developed. </sub>
+This project is maintained by [HexWald](https://github.com/HexWald).
 
 ## Installation
 
-1. Install Fabric Loader for your Minecraft version.
-2. Install the Fabric API Mod.
-3. Download the latest build from the [GitHub Actions](https://github.com/jirmjahu/coralmod/actions) tab.
+1. Install Fabric Loader for Minecraft 1.21.11.
+2. Install Fabric API.
+3. Download a build from [GitHub Actions](https://github.com/HexWald/CacaoVisualClinet/actions).
 4. Extract the `.zip` file and put the `.jar` file inside into your `mods` folder.
 5. Launch the game with the Fabric profile.
