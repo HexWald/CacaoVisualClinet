@@ -15,6 +15,7 @@ import net.cacaovisualclient.mod.ui.modmenu.ModMenuScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
@@ -27,7 +28,10 @@ public class CacaoVisualClient implements ClientModInitializer {
 
     public static final String MOD_ID = "cacaovisualclient";
     public static final String MOD_NAME = "CacaoVisualClient";
-    public static final String MOD_VERSION = "0.8.0";
+    public static final String MOD_VERSION = FabricLoader.getInstance()
+            .getModContainer(MOD_ID)
+            .map(container -> container.getMetadata().getVersion().getFriendlyString())
+            .orElse("unknown");
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
