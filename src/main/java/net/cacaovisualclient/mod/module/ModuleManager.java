@@ -20,6 +20,7 @@ public class ModuleManager {
         register(new FullBrightModule());
         register(new NametagsModule());
         register(new NoBackgroundModule());
+        register(new NoChatIndicatorsModule());
         register(new PingModule());
         register(new ServerAddressModule());
         register(new ViewTweaksModule());

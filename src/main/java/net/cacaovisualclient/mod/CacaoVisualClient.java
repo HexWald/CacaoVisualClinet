@@ -35,22 +35,26 @@ public class CacaoVisualClient implements ClientModInitializer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+    private static final KeyMapping.Category KEY_CATEGORY = KeyMapping.Category.register(
+            Identifier.fromNamespaceAndPath(MOD_ID, "controls")
+    );
+
     public static KeyMapping ZOOM_KEY_MAPPING = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-            "Zoom",
+            "key.cacaovisualclient.zoom",
             GLFW.GLFW_KEY_C,
-            KeyMapping.Category.register(Identifier.parse("cacaovisualclient.key.zoom"))
+            KEY_CATEGORY
     ));
 
     public static KeyMapping MODMENU_KEY_MAPPING = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-            "Mod Menu",
+            "key.cacaovisualclient.modmenu",
             GLFW.GLFW_KEY_RIGHT_SHIFT,
-            KeyMapping.Category.register(Identifier.parse("cacaovisualclient.key.modmenu"))
+            KEY_CATEGORY
     ));
 
     public static KeyMapping HUD_EDITOR_KEY_MAPPING = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-            "Hud Editor",
+            "key.cacaovisualclient.hud_editor",
             GLFW.GLFW_KEY_P,
-            KeyMapping.Category.register(Identifier.parse("cacaovisualclient.key.editor"))
+            KEY_CATEGORY
     ));
 
     @Getter
