@@ -1,8 +1,8 @@
 package net.cacaovisualclient.mod.config.profile;
 
 import lombok.Getter;
+import net.cacaovisualclient.mod.CacaoVisualClient;
 import net.cacaovisualclient.mod.config.Config;
-import net.cacaovisualclient.mod.config.ConfigStorage;
 import net.cacaovisualclient.mod.module.ModuleManager;
 
 import java.util.ArrayList;
@@ -13,7 +13,6 @@ public class ProfileManager {
     public static final String DEFAULT_PROFILE_NAME = "Default";
 
     private final Config config;
-    private final ConfigStorage configStorage;
     private final ProfileStorage storage;
     private final ModuleManager moduleManager;
 
@@ -21,9 +20,8 @@ public class ProfileManager {
     private Profile currentProfile;
     private final List<Profile> profiles;
 
-    public ProfileManager(Config config, ConfigStorage configStorage, ProfileStorage storage, ModuleManager moduleManager) {
+    public ProfileManager(Config config, ProfileStorage storage, ModuleManager moduleManager) {
         this.config = config;
-        this.configStorage = configStorage;
         this.storage = storage;
         this.moduleManager = moduleManager;
 
@@ -34,7 +32,24 @@ public class ProfileManager {
             createProfile(DEFAULT_PROFILE_NAME);
         }
 
-        load(config.getCurrentProfile());
+        final Profile requestedProfile = getProfile(config.getCurrentProfile());
+        final Profile fallbackProfile = getProfile(DEFAULT_PROFILE_NAME);
+        final Profile profileToLoad = requestedProfile != null
+                ? requestedProfile
+                : fallbackProfile != null ? fallbackProfile : profiles.getFirst();
+
+        if (requestedProfile == null) {
+            CacaoVisualClient.LOGGER.warn(
+                    "Profile '{}' was not found, falling back to '{}'",
+                    config.getCurrentProfile(),
+                    profileToLoad.getName()
+            );
+        }
+
+        if (!load(profileToLoad.getName())) {
+            CacaoVisualClient.LOGGER.warn("Failed to load profile '{}', using current module defaults", profileToLoad.getName());
+            setCurrentProfile(profileToLoad);
+        }
     }
 
     public Profile getProfile(String name) {
@@ -63,16 +78,19 @@ public class ProfileManager {
     }
 
     public void saveCurrentProfile() {
-        saveProfile(currentProfile);
+        if (currentProfile != null) {
+            saveProfile(currentProfile);
+        }
     }
 
-    public void load(String name) {
+    public boolean load(String name) {
         final Profile profile = storage.load(name);
         if (profile == null) {
-            return;
+            return false;
         }
 
         setCurrentProfile(profile);
+        return true;
     }
 
     public void setCurrentProfile(Profile profile) {

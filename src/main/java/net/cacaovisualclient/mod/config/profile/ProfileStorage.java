@@ -2,12 +2,22 @@ package net.cacaovisualclient.mod.config.profile;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import net.cacaovisualclient.mod.CacaoVisualClient;
 import net.cacaovisualclient.mod.module.ModuleManager;
 import net.cacaovisualclient.mod.utils.JsonUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 public class ProfileStorage {
 
@@ -23,14 +33,22 @@ public class ProfileStorage {
 
     public List<Profile> loadProfiles() {
         final List<Profile> profileList = new ArrayList<>();
+        final File[] files = PROFILE_DIR.listFiles(file ->
+                file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".json")
+        );
 
-        for (File file : PROFILE_DIR.listFiles()) {
-            if (!file.isFile() && !file.getName().endsWith(".json")) {
-                continue;
+        if (files == null) {
+            CacaoVisualClient.LOGGER.warn("Failed to list profiles in {}", PROFILE_DIR.getAbsolutePath());
+            return profileList;
+        }
+
+        Arrays.sort(files, Comparator.comparing(File::getName, String.CASE_INSENSITIVE_ORDER));
+
+        for (File file : files) {
+            final Profile profile = loadMetadata(file);
+            if (profile != null) {
+                profileList.add(profile);
             }
-
-            final Profile profile = load(file.getName().substring(0, file.getName().length() - 5));
-            profileList.add(profile);
         }
 
         return profileList;
@@ -42,5 +60,22 @@ public class ProfileStorage {
 
     public Profile load(String name) {
         return JsonUtils.loadFromJson(gson, new File(PROFILE_DIR, name + ".json"), Profile.class);
+    }
+
+    private Profile loadMetadata(File file) {
+        try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+            final JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            final String fallbackName = file.getName().substring(0, file.getName().length() - 5);
+            final String name = root.has("name") ? root.get("name").getAsString() : fallbackName;
+
+            if (name.isBlank()) {
+                throw new IllegalStateException("Profile name is empty");
+            }
+
+            return new Profile(name, List.of());
+        } catch (IOException | RuntimeException e) {
+            CacaoVisualClient.LOGGER.error("Skipping unreadable profile: {}", file.getName(), e);
+            return null;
+        }
     }
 }

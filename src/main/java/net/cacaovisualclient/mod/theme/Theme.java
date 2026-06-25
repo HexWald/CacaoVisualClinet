@@ -2,11 +2,12 @@ package net.cacaovisualclient.mod.theme;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.cacaovisualclient.mod.CacaoVisualClient;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.Optional;
 
 @Getter
 @AllArgsConstructor
@@ -23,4 +24,13 @@ public enum Theme {
     private final Color primaryColor;
     private final Color secondaryColor;
 
+    public static Optional<Theme> fromConfigValue(String value) {
+        if (value == null || value.isBlank()) {
+            return Optional.empty();
+        }
+
+        return Arrays.stream(values())
+                .filter(theme -> theme.name().equalsIgnoreCase(value))
+                .findFirst();
+    }
 }

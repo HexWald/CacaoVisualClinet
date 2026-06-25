@@ -75,9 +75,14 @@ public class CacaoVisualClient implements ClientModInitializer {
             configStorage = new ConfigStorage();
             configManager = new ConfigManager(configStorage);
             profileStorage = new ProfileStorage(moduleManager);
-            profileManager = new ProfileManager(getConfig(), configStorage, profileStorage, moduleManager);
+            profileManager = new ProfileManager(getConfig(), profileStorage, moduleManager);
 
-            setSelectedTheme(Theme.valueOf(getConfig().getSelectedTheme()));
+            final String configuredTheme = getConfig().getSelectedTheme();
+            final Theme theme = Theme.fromConfigValue(configuredTheme).orElseGet(() -> {
+                LOGGER.warn("Unknown theme '{}', falling back to {}", configuredTheme, Theme.TUBE);
+                return Theme.TUBE;
+            });
+            setSelectedTheme(theme);
 
             new CacaoVisualClientCommand();
 

@@ -6,9 +6,11 @@ import lombok.experimental.UtilityClass;
 import net.cacaovisualclient.mod.CacaoVisualClient;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 @UtilityClass
 public class JsonUtils {
@@ -20,9 +22,13 @@ public class JsonUtils {
     }
 
     public <T> T loadFromJson(Gson gson, File file, Class<T> clazz) {
-        try (FileReader reader = new FileReader(file)) {
+        if (!file.isFile()) {
+            return null;
+        }
+
+        try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
             return gson.fromJson(reader, clazz);
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             CacaoVisualClient.LOGGER.error("Failed to load json from file: {}", file.getName(), e);
         }
         return null;
@@ -33,7 +39,18 @@ public class JsonUtils {
     }
 
     public void saveToJson(Gson gson, File file, Object object) {
-        try (FileWriter writer = new FileWriter(file)) {
+        final File parent = file.getParentFile();
+
+        try {
+            if (parent != null) {
+                Files.createDirectories(parent.toPath());
+            }
+        } catch (IOException e) {
+            CacaoVisualClient.LOGGER.error("Failed to create directory for json file: {}", file.getAbsolutePath(), e);
+            return;
+        }
+
+        try (Writer writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
             gson.toJson(object, writer);
         } catch (IOException e) {
             CacaoVisualClient.LOGGER.error("Failed to save json to file: {}", file.getName(), e);
