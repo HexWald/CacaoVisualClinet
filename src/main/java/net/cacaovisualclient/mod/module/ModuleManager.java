@@ -15,6 +15,7 @@ public class ModuleManager {
         register(new ClockModule());
         register(new CoordinatesModule());
         register(new CPSModule());
+        register(new DiscordPresenceModule());
         register(new ScoreboardModule());
         register(new FpsModule());
         register(new FullBrightModule());
