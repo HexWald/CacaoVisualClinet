@@ -28,6 +28,7 @@ public class CacaoVisualClient implements ClientModInitializer {
 
     public static final String MOD_ID = "cacaovisualclient";
     public static final String MOD_NAME = "CacaoVisualClient";
+
     public static final String MOD_VERSION = FabricLoader.getInstance()
             .getModContainer(MOD_ID)
             .map(container -> container.getMetadata().getVersion().getFriendlyString())
@@ -39,23 +40,37 @@ public class CacaoVisualClient implements ClientModInitializer {
             Identifier.fromNamespaceAndPath(MOD_ID, "controls")
     );
 
-    public static KeyMapping ZOOM_KEY_MAPPING = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-            "key.cacaovisualclient.zoom",
-            GLFW.GLFW_KEY_C,
-            KEY_CATEGORY
-    ));
+    public static final KeyMapping ZOOM_KEY_MAPPING = KeyBindingHelper.registerKeyBinding(
+            new KeyMapping(
+                    "key.cacaovisualclient.zoom",
+                    GLFW.GLFW_KEY_C,
+                    KEY_CATEGORY
+            )
+    );
 
-    public static KeyMapping MODMENU_KEY_MAPPING = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-            "key.cacaovisualclient.modmenu",
-            GLFW.GLFW_KEY_RIGHT_SHIFT,
-            KEY_CATEGORY
-    ));
+    public static final KeyMapping MODMENU_KEY_MAPPING = KeyBindingHelper.registerKeyBinding(
+            new KeyMapping(
+                    "key.cacaovisualclient.modmenu",
+                    GLFW.GLFW_KEY_RIGHT_SHIFT,
+                    KEY_CATEGORY
+            )
+    );
 
-    public static KeyMapping HUD_EDITOR_KEY_MAPPING = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-            "key.cacaovisualclient.hud_editor",
-            GLFW.GLFW_KEY_P,
-            KEY_CATEGORY
-    ));
+    public static final KeyMapping HUD_EDITOR_KEY_MAPPING = KeyBindingHelper.registerKeyBinding(
+            new KeyMapping(
+                    "key.cacaovisualclient.hud_editor",
+                    GLFW.GLFW_KEY_P,
+                    KEY_CATEGORY
+            )
+    );
+
+    public static final KeyMapping INSPECT_KEY_MAPPING = KeyBindingHelper.registerKeyBinding(
+            new KeyMapping(
+                    "key.cacaovisualclient.inspect",
+                    GLFW.GLFW_KEY_V,
+                    KEY_CATEGORY
+            )
+    );
 
     @Getter
     private static CacaoVisualClient instance;
@@ -65,7 +80,6 @@ public class CacaoVisualClient implements ClientModInitializer {
     private ConfigManager configManager;
     private ProfileStorage profileStorage;
     private ProfileManager profileManager;
-
     private Theme selectedTheme;
 
     @Override
@@ -82,10 +96,12 @@ public class CacaoVisualClient implements ClientModInitializer {
             profileManager = new ProfileManager(getConfig(), profileStorage, moduleManager);
 
             final String configuredTheme = getConfig().getSelectedTheme();
+
             final Theme theme = Theme.fromConfigValue(configuredTheme).orElseGet(() -> {
                 LOGGER.warn("Unknown theme '{}', falling back to {}", configuredTheme, Theme.TUBE);
                 return Theme.TUBE;
             });
+
             setSelectedTheme(theme);
 
             new CacaoVisualClientCommand();
@@ -111,16 +127,11 @@ public class CacaoVisualClient implements ClientModInitializer {
             LOGGER.info("Shutting down...");
 
             if (profileManager != null && configManager != null) {
-                LOGGER.info("Saving modules...");
                 save();
             }
         }));
     }
 
-
-    /**
-     * Saves the current profile, including module states, positions, and the config settings.
-     */
     public void save() {
         profileManager.saveCurrentProfile();
         configManager.save();

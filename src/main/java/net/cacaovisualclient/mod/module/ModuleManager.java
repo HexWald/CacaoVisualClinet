@@ -22,8 +22,10 @@ public class ModuleManager {
         register(new NametagsModule());
         register(new NoBackgroundModule());
         register(new NoChatIndicatorsModule());
+        register(new LowHpEffectModule());
         register(new PingModule());
         register(new ServerAddressModule());
+        register(new SwordInspectModule());
         register(new ViewTweaksModule());
         register(new ZoomModule());
     }

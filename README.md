@@ -20,3 +20,9 @@ This project is maintained by [HexWald](https://github.com/HexWald).
 4. Enable the `DiscordPresence` module in the mod menu.
 
 The server address is hidden by default and can be enabled in the module settings.
+
+## Visual modules
+
+- `Sword Inspect` adds first-person sword inspect animations on `V`. It supports cycle, random, and fixed animation styles.
+- `Low HP Effect` adds a soft red edge vignette, heartbeat sound, and a compact warning toast when your health is low.
+- Client notifications use the CacaoVisualClient side-toast overlay instead of vanilla system toasts.

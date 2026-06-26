@@ -2,5 +2,6 @@
   "key.category.cacaovisualclient.controls": "CacaoVisualClient",
   "key.cacaovisualclient.zoom": "Приближение",
   "key.cacaovisualclient.modmenu": "Открыть меню клиента",
-  "key.cacaovisualclient.hud_editor": "Открыть редактор HUD"
+  "key.cacaovisualclient.hud_editor": "Открыть редактор HUD",
+  "key.cacaovisualclient.inspect": "Осмотр меча"
 }

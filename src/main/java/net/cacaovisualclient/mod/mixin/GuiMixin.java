@@ -2,7 +2,9 @@ package net.cacaovisualclient.mod.mixin;
 
 import net.cacaovisualclient.mod.CacaoVisualClient;
 import net.cacaovisualclient.mod.module.HudModule;
+import net.cacaovisualclient.mod.module.modules.LowHpEffectModule;
 import net.cacaovisualclient.mod.module.modules.ScoreboardModule;
+import net.cacaovisualclient.mod.utils.Notification;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
@@ -24,12 +26,22 @@ public abstract class GuiMixin {
 
     @Inject(method = "render", at = @At("RETURN"))
     private void onRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo info) {
+        final LowHpEffectModule lowHpEffectModule = CacaoVisualClient.getInstance()
+                .getModuleManager()
+                .getModule(LowHpEffectModule.class);
+
+        if (lowHpEffectModule != null) {
+            lowHpEffectModule.renderOverlay(guiGraphics);
+        }
+
         for (HudModule hudModule : CacaoVisualClient.getInstance().getModuleManager().getHudModules()) {
             if (!hudModule.isEnabled()) {
                 continue;
             }
             hudModule.render(guiGraphics, getFont());
         }
+
+        Notification.render(guiGraphics, getFont());
     }
 
     @Inject(method = "displayScoreboardSidebar", at = @At("HEAD"), cancellable = true)

@@ -1,15 +1,31 @@
 package net.cacaovisualclient.mod.utils;
 
 import lombok.experimental.UtilityClass;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.toasts.SystemToast;
-import net.minecraft.network.chat.Component;
+import net.cacaovisualclient.mod.ui.toast.CacaoToastManager;
+import net.cacaovisualclient.mod.ui.toast.CacaoToastType;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 
 @UtilityClass
 public class Notification {
 
     public void sendNotification(String title, String text) {
-        Minecraft.getInstance().getToastManager().addToast(
-                SystemToast.multiline(Minecraft.getInstance(), SystemToast.SystemToastId.NARRATOR_TOGGLE, Component.literal(title), Component.literal(text)));
+        CacaoToastManager.push(title, text, CacaoToastType.INFO);
+    }
+
+    public void sendSuccess(String title, String text) {
+        CacaoToastManager.push(title, text, CacaoToastType.SUCCESS);
+    }
+
+    public void sendWarning(String title, String text) {
+        CacaoToastManager.push(title, text, CacaoToastType.WARNING);
+    }
+
+    public void sendError(String title, String text) {
+        CacaoToastManager.push(title, text, CacaoToastType.DANGER);
+    }
+
+    public void render(GuiGraphics guiGraphics, Font font) {
+        CacaoToastManager.render(guiGraphics, font);
     }
 }
