@@ -26,5 +26,5 @@ The server address is hidden by default and can be enabled in the module setting
 - `Sword Inspect` adds first-person sword inspect animations on `V`. It supports cycle, random, and fixed animation styles.
 - `Low HP Effect` adds a soft red edge vignette, heartbeat sound, and a compact warning toast when your health is low.
 - `BedWars Alerts` turns common BedWars chat/title events into compact side toasts.
-- `Hitmarker` adds a small center hitmarker with optional hit sound and kill confirmation.
+- `Hitmarker` adds animated center hitmarker styles with optional hit sound and kill confirmation.
 - Client notifications use the CacaoVisualClient side-toast overlay instead of vanilla system toasts.
