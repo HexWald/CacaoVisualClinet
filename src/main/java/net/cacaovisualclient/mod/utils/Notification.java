@@ -13,6 +13,10 @@ public class Notification {
         CacaoToastManager.push(title, text, CacaoToastType.INFO);
     }
 
+    public void send(String title, String text, CacaoToastType type) {
+        CacaoToastManager.push(title, text, type);
+    }
+
     public void sendSuccess(String title, String text) {
         CacaoToastManager.push(title, text, CacaoToastType.SUCCESS);
     }

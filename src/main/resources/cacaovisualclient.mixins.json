@@ -15,6 +15,7 @@
     "LivingEntityRendererMixin",
     "MinecraftMixin",
     "MouseHandlerMixin",
+    "MultiPlayerGameModeMixin",
     "TitleScreenMixin",
     "UnitDoubleMixin",
     "ItemInHandRendererMixin",

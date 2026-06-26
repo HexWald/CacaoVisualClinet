@@ -1,7 +1,9 @@
 package net.cacaovisualclient.mod.mixin;
 
 import net.cacaovisualclient.mod.CacaoVisualClient;
+import net.cacaovisualclient.mod.event.TitleTextEvent;
 import net.cacaovisualclient.mod.module.HudModule;
+import net.cacaovisualclient.mod.module.modules.HitmarkerModule;
 import net.cacaovisualclient.mod.module.modules.LowHpEffectModule;
 import net.cacaovisualclient.mod.module.modules.ScoreboardModule;
 import net.cacaovisualclient.mod.utils.Notification;
@@ -41,7 +43,36 @@ public abstract class GuiMixin {
             hudModule.render(guiGraphics, getFont());
         }
 
+        final HitmarkerModule hitmarkerModule = CacaoVisualClient.getInstance()
+                .getModuleManager()
+                .getModule(HitmarkerModule.class);
+
+        if (hitmarkerModule != null) {
+            hitmarkerModule.render(guiGraphics, getFont());
+        }
+
         Notification.render(guiGraphics, getFont());
+    }
+
+    @Inject(method = "setTitle", at = @At("HEAD"))
+    private void onSetTitle(Component component, CallbackInfo info) {
+        publishTitleText(component);
+    }
+
+    @Inject(method = "setSubtitle", at = @At("HEAD"))
+    private void onSetSubtitle(Component component, CallbackInfo info) {
+        publishTitleText(component);
+    }
+
+    @Inject(method = "setOverlayMessage", at = @At("HEAD"))
+    private void onSetOverlayMessage(Component component, boolean tinted, CallbackInfo info) {
+        publishTitleText(component);
+    }
+
+    private static void publishTitleText(Component component) {
+        if (component != null) {
+            TitleTextEvent.TITLE_TEXT_EVENT.invoker().onTitleText(component.getString());
+        }
     }
 
     @Inject(method = "displayScoreboardSidebar", at = @At("HEAD"), cancellable = true)

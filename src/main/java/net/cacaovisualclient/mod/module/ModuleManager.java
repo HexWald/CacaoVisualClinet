@@ -15,10 +15,12 @@ public class ModuleManager {
         register(new ClockModule());
         register(new CoordinatesModule());
         register(new CPSModule());
+        register(new BedWarsAlertsModule());
         register(new DiscordPresenceModule());
         register(new ScoreboardModule());
         register(new FpsModule());
         register(new FullBrightModule());
+        register(new HitmarkerModule());
         register(new NametagsModule());
         register(new NoBackgroundModule());
         register(new NoChatIndicatorsModule());
