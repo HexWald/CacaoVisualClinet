@@ -48,10 +48,21 @@ public abstract class GuiMixin {
                 .getModule(HitmarkerModule.class);
 
         if (hitmarkerModule != null) {
-            hitmarkerModule.render(guiGraphics, getFont());
+            hitmarkerModule.renderKillConfirm(guiGraphics, getFont());
         }
 
         Notification.render(guiGraphics, getFont());
+    }
+
+    @Inject(method = "renderCrosshair", at = @At("TAIL"))
+    private void onRenderCrosshair(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo info) {
+        final HitmarkerModule hitmarkerModule = CacaoVisualClient.getInstance()
+                .getModuleManager()
+                .getModule(HitmarkerModule.class);
+
+        if (hitmarkerModule != null) {
+            hitmarkerModule.renderCrosshair(guiGraphics);
+        }
     }
 
     @Inject(method = "setTitle", at = @At("HEAD"))

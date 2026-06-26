@@ -56,18 +56,22 @@ public class HitmarkerModule extends Module {
         AddChatMessageEvent.ADD_CHAT_MESSAGE_EVENT.register(this::handleChatMessage);
     }
 
-    public void render(GuiGraphics guiGraphics, Font font) {
+    public void renderKillConfirm(GuiGraphics guiGraphics, Font font) {
         if (!isEnabled() || mc.options.hideGui) {
             return;
         }
 
-        if (marker.getValue()) {
-            renderHitmarker(guiGraphics);
+        if (killConfirm.getValue()) {
+            renderKillConfirmText(guiGraphics, font);
+        }
+    }
+
+    public void renderCrosshair(GuiGraphics guiGraphics) {
+        if (!isEnabled() || mc.options.hideGui || !marker.getValue()) {
+            return;
         }
 
-        if (killConfirm.getValue()) {
-            renderKillConfirm(guiGraphics, font);
-        }
+        renderHitmarker(guiGraphics);
     }
 
     private void handleAttack(Player player, Entity target) {
@@ -123,8 +127,8 @@ public class HitmarkerModule extends Module {
         final float alpha = easeOut(1.0F - progress);
         final int color = argb(Math.round(235.0F * alpha), Color.WHITE);
         final int accent = argb(Math.round(210.0F * alpha), new Color(255, 221, 110));
-        final float centerX = mc.getWindow().getGuiScaledWidth() / 2.0F;
-        final float centerY = mc.getWindow().getGuiScaledHeight() / 2.0F;
+        final float centerX = getVanillaCrosshairCenterX(guiGraphics);
+        final float centerY = getVanillaCrosshairCenterY(guiGraphics);
         final int size = markerSize.getValue().intValue();
 
         switch (activeStyle) {
@@ -136,7 +140,7 @@ public class HitmarkerModule extends Module {
         }
     }
 
-    private void renderKillConfirm(GuiGraphics guiGraphics, Font font) {
+    private void renderKillConfirmText(GuiGraphics guiGraphics, Font font) {
         final long age = System.nanoTime() - lastKillAtNanos;
         if (lastKillAtNanos == -1L || age > KILL_CONFIRM_DURATION_NANOS) {
             return;
@@ -153,6 +157,14 @@ public class HitmarkerModule extends Module {
         final int color = argb(Math.round(245.0F * alpha), new Color(255, 221, 110));
 
         guiGraphics.drawString(font, text, x, y, color, true);
+    }
+
+    private static float getVanillaCrosshairCenterX(GuiGraphics guiGraphics) {
+        return ((guiGraphics.guiWidth() - 15) / 2) + 7.0F;
+    }
+
+    private static float getVanillaCrosshairCenterY(GuiGraphics guiGraphics) {
+        return ((guiGraphics.guiHeight() - 15) / 2) + 7.0F;
     }
 
     private static boolean isOwnKillMessage(String message, String playerName) {
