@@ -16,18 +16,6 @@ dependencies {
     annotationProcessor(libs.lombok)
 
     implementation(libs.gson)
-
-    implementation(libs.discord.ipc)
-    include(libs.discord.ipc)
-
-    implementation(libs.junixsocket.common)
-    include(libs.junixsocket.common)
-
-    implementation(libs.junixsocket.native.common)
-    include(libs.junixsocket.native.common)
-
-    implementation(libs.reflect)
-    include(libs.reflect)
 }
 
 tasks.processResources {

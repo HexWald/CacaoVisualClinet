@@ -12,7 +12,6 @@ public class Config {
     private int version;
     private String currentProfile;
     private String selectedTheme;
-    private String discordApplicationId;
 
     public Config() {
         setDefaultValues();
@@ -22,6 +21,5 @@ public class Config {
         this.version = VERSION;
         this.currentProfile = "Default";
         this.selectedTheme = "TUBE";
-        this.discordApplicationId = "";
     }
 }

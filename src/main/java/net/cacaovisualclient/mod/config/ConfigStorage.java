@@ -32,9 +32,6 @@ public class ConfigStorage {
         if (config.getSelectedTheme() == null || config.getSelectedTheme().isBlank()) {
             config.setSelectedTheme("TUBE");
         }
-        if (config.getDiscordApplicationId() == null) {
-            config.setDiscordApplicationId("");
-        }
 
         config.setVersion(Config.VERSION);
         save(config);

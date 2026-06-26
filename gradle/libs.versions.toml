@@ -7,9 +7,6 @@ fabric = "0.139.4+1.21.11"
 
 lombok = "1.18.42"
 gson = "2.13.2"
-discord-ipc = "0.11.3"
-junixsocket = "2.10.1"
-reflect = "1.6.1"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
@@ -18,10 +15,6 @@ api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric" }
 
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
-discord-ipc = { module = "io.github.cdagaming:DiscordIPC", version.ref = "discord-ipc" }
-junixsocket-common = { module = "com.kohlschutter.junixsocket:junixsocket-common", version.ref = "junixsocket" }
-junixsocket-native-common = { module = "com.kohlschutter.junixsocket:junixsocket-native-common", version.ref = "junixsocket" }
-reflect = { module = "net.lenni0451:Reflect", version.ref = "reflect" }
 
 [plugins]
 loom = { id = "fabric-loom", version.ref = "loom" }

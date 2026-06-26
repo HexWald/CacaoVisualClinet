@@ -16,7 +16,6 @@ public class ModuleManager {
         register(new CoordinatesModule());
         register(new CPSModule());
         register(new BedWarsAlertsModule());
-        register(new DiscordPresenceModule());
         register(new ScoreboardModule());
         register(new FpsModule());
         register(new FullBrightModule());

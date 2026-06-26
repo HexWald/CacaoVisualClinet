@@ -12,15 +12,6 @@ This project is maintained by [HexWald](https://github.com/HexWald).
 4. Extract the `.zip` file and put the `.jar` file inside into your `mods` folder.
 5. Launch the game with the Fabric profile.
 
-## Discord Rich Presence
-
-1. Create an application named `CacaoVisualClient` in the [Discord Developer Portal](https://discord.com/developers/applications).
-2. Copy its Application ID.
-3. Start the client once, then set `discordApplicationId` in `cacaovisualclient/config.json`.
-4. Enable the `DiscordPresence` module in the mod menu.
-
-The server address is hidden by default and can be enabled in the module settings.
-
 ## Visual modules
 
 - `Sword Inspect` adds first-person sword inspect animations on `V`. It supports cycle, random, and fixed animation styles.
