@@ -204,14 +204,17 @@ public class ProfilesTabWindow extends Window {
                         : new Color(25, 25, 25, 190).getRGB();
 
                 guiGraphics.fill(contentX(), rowY, contentX() + contentWidth(), rowY + ROW_HEIGHT - 2, rowColor);
-                guiGraphics.drawString(font, trimToWidth(font, profile.getName(), contentWidth() - 154), contentX() + 8, rowY + 10, -1, true);
+                guiGraphics.drawString(font, trimToWidth(font, profile.getName(), contentWidth() - 224), contentX() + 8, rowY + 10, -1, true);
 
                 if (active) {
-                    guiGraphics.drawString(font, "Active", rowLoadX() - 40, rowY + 10, CacaoVisualClient.getInstance().getSelectedTheme().getPrimaryColor().brighter().getRGB(), true);
+                    guiGraphics.drawString(font, "Active", rowLoadX() - 36, rowY + 10, CacaoVisualClient.getInstance().getSelectedTheme().getPrimaryColor().brighter().getRGB(), true);
                 }
 
-                drawButton(guiGraphics, font, "Load", rowLoadX(), rowY + 7, 44, BUTTON_HEIGHT, !active, false, mouseX, mouseY);
-                drawButton(guiGraphics, font, "Save", rowSaveX(), rowY + 7, 44, BUTTON_HEIGHT, true, false, mouseX, mouseY);
+                drawButton(guiGraphics, font, "Load", rowLoadX(), rowY + 7, 38, BUTTON_HEIGHT, !active, false, mouseX, mouseY);
+                drawButton(guiGraphics, font, "Save", rowSaveX(), rowY + 7, 38, BUTTON_HEIGHT, true, false, mouseX, mouseY);
+                drawButton(guiGraphics, font, "Dup", rowDuplicateX(), rowY + 7, 32, BUTTON_HEIGHT, true, false, mouseX, mouseY);
+                drawButton(guiGraphics, font, "Ren", rowRenameX(), rowY + 7, 32, BUTTON_HEIGHT, true, false, mouseX, mouseY);
+                drawButton(guiGraphics, font, "Del", rowDeleteX(), rowY + 7, 32, BUTTON_HEIGHT, true, true, mouseX, mouseY);
             }
         }
 
@@ -223,15 +226,30 @@ public class ProfilesTabWindow extends Window {
                 final Profile profile = profiles.get(i);
                 final int rowY = rowsY + i * ROW_HEIGHT;
 
-                if (MouseUtils.isMouseOver(mouseX, mouseY, rowLoadX(), rowY + 7, 44, BUTTON_HEIGHT)) {
+                if (MouseUtils.isMouseOver(mouseX, mouseY, rowLoadX(), rowY + 7, 38, BUTTON_HEIGHT)) {
                     loadProfile(profile);
                     return;
                 }
 
-                if (MouseUtils.isMouseOver(mouseX, mouseY, rowSaveX(), rowY + 7, 44, BUTTON_HEIGHT)) {
+                if (MouseUtils.isMouseOver(mouseX, mouseY, rowSaveX(), rowY + 7, 38, BUTTON_HEIGHT)) {
                     profileManager.saveProfile(profile.getName());
                     CacaoVisualClient.getInstance().save();
                     setStatus("Saved " + profile.getName());
+                    return;
+                }
+
+                if (MouseUtils.isMouseOver(mouseX, mouseY, rowDuplicateX(), rowY + 7, 32, BUTTON_HEIGHT)) {
+                    duplicateProfile(profile);
+                    return;
+                }
+
+                if (MouseUtils.isMouseOver(mouseX, mouseY, rowRenameX(), rowY + 7, 32, BUTTON_HEIGHT)) {
+                    renameProfile(profile);
+                    return;
+                }
+
+                if (MouseUtils.isMouseOver(mouseX, mouseY, rowDeleteX(), rowY + 7, 32, BUTTON_HEIGHT)) {
+                    deleteProfile(profile);
                     return;
                 }
             }
@@ -274,6 +292,62 @@ public class ProfilesTabWindow extends Window {
 
             CacaoVisualClient.getInstance().save();
             setStatus("Loaded " + profile.getName());
+        }
+
+        private void duplicateProfile(Profile profile) {
+            final String targetName = nameBox.getValue().trim();
+            if (!isUsableTargetName(targetName)) {
+                return;
+            }
+
+            if (!profileManager.duplicateProfile(profile.getName(), targetName)) {
+                setStatus("Could not duplicate profile");
+                return;
+            }
+
+            CacaoVisualClient.getInstance().save();
+            nameBox.setValue("");
+            setStatus("Duplicated " + profile.getName());
+        }
+
+        private void renameProfile(Profile profile) {
+            final String targetName = nameBox.getValue().trim();
+            if (!isUsableTargetName(targetName)) {
+                return;
+            }
+
+            if (!profileManager.renameProfile(profile.getName(), targetName)) {
+                setStatus("Could not rename profile");
+                return;
+            }
+
+            CacaoVisualClient.getInstance().save();
+            nameBox.setValue("");
+            setStatus("Renamed " + profile.getName());
+        }
+
+        private void deleteProfile(Profile profile) {
+            if (!profileManager.deleteProfile(profile.getName())) {
+                setStatus("Could not delete profile");
+                return;
+            }
+
+            CacaoVisualClient.getInstance().save();
+            setStatus("Deleted " + profile.getName());
+        }
+
+        private boolean isUsableTargetName(String name) {
+            if (name.isBlank()) {
+                setStatus("Enter target name first");
+                return false;
+            }
+
+            if (hasUnsafeFileChars(name)) {
+                setStatus("Name has unsafe characters");
+                return false;
+            }
+
+            return true;
         }
 
         private boolean hasUnsafeFileChars(String name) {
@@ -401,12 +475,24 @@ public class ProfilesTabWindow extends Window {
             return contentX() + contentWidth() - 82;
         }
 
+        private int rowDeleteX() {
+            return contentX() + contentWidth() - 38;
+        }
+
+        private int rowRenameX() {
+            return rowDeleteX() - 36;
+        }
+
+        private int rowDuplicateX() {
+            return rowRenameX() - 36;
+        }
+
         private int rowSaveX() {
-            return contentX() + contentWidth() - 54;
+            return rowDuplicateX() - 42;
         }
 
         private int rowLoadX() {
-            return rowSaveX() - 50;
+            return rowSaveX() - 42;
         }
     }
 }

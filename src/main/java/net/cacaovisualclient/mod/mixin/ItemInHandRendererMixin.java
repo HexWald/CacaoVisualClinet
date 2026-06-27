@@ -6,6 +6,7 @@ import net.cacaovisualclient.mod.CacaoVisualClient;
 import net.cacaovisualclient.mod.feature.inspect.SwordInspectStyle;
 import net.cacaovisualclient.mod.module.Module;
 import net.cacaovisualclient.mod.module.modules.SwordInspectModule;
+import net.cacaovisualclient.mod.module.modules.ViewmodelEditorModule;
 import net.cacaovisualclient.mod.module.modules.ViewTweaksModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemInHandRenderer;
@@ -48,7 +49,18 @@ public class ItemInHandRendererMixin {
         }
 
         lowerShieldIfEnabled(itemStack, poseStack);
+        applyViewmodelEditorIfEnabled(poseStack, isLeftHand);
         applySwordInspectIfRunning(itemStack, poseStack, isLeftHand);
+    }
+
+    private static void applyViewmodelEditorIfEnabled(PoseStack poseStack, boolean isLeftHand) {
+        final ViewmodelEditorModule viewmodelEditorModule = CacaoVisualClient.getInstance()
+                .getModuleManager()
+                .getModule(ViewmodelEditorModule.class);
+
+        if (viewmodelEditorModule != null) {
+            viewmodelEditorModule.apply(poseStack, isLeftHand);
+        }
     }
 
     private static void lowerShieldIfEnabled(ItemStack itemStack, PoseStack poseStack) {

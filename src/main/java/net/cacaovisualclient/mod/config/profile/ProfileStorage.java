@@ -62,6 +62,41 @@ public class ProfileStorage {
         return JsonUtils.loadFromJson(gson, new File(PROFILE_DIR, name + ".json"), Profile.class);
     }
 
+    public boolean delete(String name) {
+        return new File(PROFILE_DIR, name + ".json").delete();
+    }
+
+    public boolean copy(String sourceName, String targetName) {
+        final File source = new File(PROFILE_DIR, sourceName + ".json");
+        final File target = new File(PROFILE_DIR, targetName + ".json");
+
+        if (!source.isFile() || target.exists()) {
+            return false;
+        }
+
+        try (Reader reader = Files.newBufferedReader(source.toPath(), StandardCharsets.UTF_8)) {
+            final JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            root.addProperty("name", targetName);
+            JsonUtils.saveToJson(target, root);
+            return true;
+        } catch (IOException | RuntimeException e) {
+            CacaoVisualClient.LOGGER.error("Failed to copy profile {} to {}", sourceName, targetName, e);
+            return false;
+        }
+    }
+
+    public boolean rename(String sourceName, String targetName) {
+        if (!copy(sourceName, targetName)) {
+            return false;
+        }
+
+        if (!delete(sourceName)) {
+            CacaoVisualClient.LOGGER.warn("Copied profile '{}' to '{}', but failed to remove the old file", sourceName, targetName);
+        }
+
+        return true;
+    }
+
     private Profile loadMetadata(File file) {
         try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
             final JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();

@@ -15,6 +15,7 @@ public class ModuleManager {
         register(new ClockModule());
         register(new CoordinatesModule());
         register(new CPSModule());
+        register(new CustomCrosshairModule());
         register(new BedWarsAlertsModule());
         register(new ScoreboardModule());
         register(new FpsModule());
@@ -27,6 +28,7 @@ public class ModuleManager {
         register(new PingModule());
         register(new ServerAddressModule());
         register(new SwordInspectModule());
+        register(new ViewmodelEditorModule());
         register(new ViewTweaksModule());
         register(new ZoomModule());
     }

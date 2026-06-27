@@ -3,6 +3,7 @@ package net.cacaovisualclient.mod.mixin;
 import net.cacaovisualclient.mod.CacaoVisualClient;
 import net.cacaovisualclient.mod.event.TitleTextEvent;
 import net.cacaovisualclient.mod.module.HudModule;
+import net.cacaovisualclient.mod.module.modules.CustomCrosshairModule;
 import net.cacaovisualclient.mod.module.modules.HitmarkerModule;
 import net.cacaovisualclient.mod.module.modules.LowHpEffectModule;
 import net.cacaovisualclient.mod.module.modules.ScoreboardModule;
@@ -54,8 +55,25 @@ public abstract class GuiMixin {
         Notification.render(guiGraphics, getFont());
     }
 
+    @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
+    private void onRenderCustomCrosshair(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo info) {
+        final CustomCrosshairModule customCrosshairModule = CacaoVisualClient.getInstance()
+                .getModuleManager()
+                .getModule(CustomCrosshairModule.class);
+
+        if (customCrosshairModule != null && customCrosshairModule.isEnabled()) {
+            customCrosshairModule.render(guiGraphics);
+            renderHitmarker(guiGraphics);
+            info.cancel();
+        }
+    }
+
     @Inject(method = "renderCrosshair", at = @At("TAIL"))
     private void onRenderCrosshair(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo info) {
+        renderHitmarker(guiGraphics);
+    }
+
+    private static void renderHitmarker(GuiGraphics guiGraphics) {
         final HitmarkerModule hitmarkerModule = CacaoVisualClient.getInstance()
                 .getModuleManager()
                 .getModule(HitmarkerModule.class);

@@ -76,6 +76,65 @@ public class ProfileManager {
         return true;
     }
 
+    public boolean duplicateProfile(String sourceName, String targetName) {
+        final String cleanTarget = targetName == null ? "" : targetName.trim();
+        if (getProfile(sourceName) == null || cleanTarget.isBlank() || getProfile(cleanTarget) != null) {
+            return false;
+        }
+
+        if (!storage.copy(sourceName, cleanTarget)) {
+            return false;
+        }
+
+        profiles.add(new Profile(cleanTarget, List.of()));
+        return true;
+    }
+
+    public boolean renameProfile(String sourceName, String targetName) {
+        final String cleanTarget = targetName == null ? "" : targetName.trim();
+        final Profile source = getProfile(sourceName);
+        if (source == null || cleanTarget.isBlank() || getProfile(cleanTarget) != null) {
+            return false;
+        }
+
+        if (!storage.rename(sourceName, cleanTarget)) {
+            return false;
+        }
+
+        profiles.remove(source);
+        final Profile renamed = new Profile(cleanTarget, source.getEnabledModules());
+        profiles.add(renamed);
+
+        if (currentProfile != null && currentProfile.getName().equals(sourceName)) {
+            currentProfile = renamed;
+            config.setCurrentProfile(cleanTarget);
+        }
+
+        return true;
+    }
+
+    public boolean deleteProfile(String name) {
+        final Profile profile = getProfile(name);
+        if (profile == null || profiles.size() <= 1 || DEFAULT_PROFILE_NAME.equals(profile.getName())) {
+            return false;
+        }
+
+        if (!storage.delete(name)) {
+            return false;
+        }
+
+        profiles.remove(profile);
+
+        if (currentProfile != null && currentProfile.getName().equals(name)) {
+            final Profile fallback = getProfile(DEFAULT_PROFILE_NAME) != null
+                    ? getProfile(DEFAULT_PROFILE_NAME)
+                    : profiles.getFirst();
+            load(fallback.getName());
+        }
+
+        return true;
+    }
+
     public void saveProfile(Profile profile) {
         storage.save(profile);
     }
