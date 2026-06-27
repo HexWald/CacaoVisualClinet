@@ -59,10 +59,21 @@ public class ProfileManager {
                 .orElse(null);
     }
 
-    public void createProfile(String name) {
-        final Profile profile = new Profile(name, moduleManager.getEnabledModules());
+    public List<Profile> getProfiles() {
+        return List.copyOf(profiles);
+    }
+
+    public boolean createProfile(String name) {
+        final String cleanName = name == null ? "" : name.trim();
+        if (cleanName.isBlank() || getProfile(cleanName) != null) {
+            return false;
+        }
+
+        final Profile profile = new Profile(cleanName, moduleManager.getEnabledModules());
         storage.save(profile);
         profiles.add(profile);
+        setCurrentProfile(profile);
+        return true;
     }
 
     public void saveProfile(Profile profile) {

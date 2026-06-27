@@ -33,26 +33,27 @@ public class NumberSettingWidget extends Widget {
         super.render(guiGraphics, mouseX, mouseY, scrollOffset);
         updateValue(mouseX);
 
+        final int renderY = y - scrollOffset;
         final Color baseGray = ModMenuScreen.BASE_GRAY;
         final Theme theme = CacaoVisualClient.getInstance().getSelectedTheme();
 
         final double renderWidth = (double) (width) * (setting.getValue() - setting.getMin()) / (setting.getMax() - setting.getMin());
 
-        guiGraphics.fillGradient(x, y, x + width, y + height, baseGray.getRGB(), baseGray.darker().getRGB());
+        guiGraphics.fillGradient(x, renderY, x + width, renderY + height, baseGray.getRGB(), baseGray.darker().getRGB());
         guiGraphics.fillGradient(x,
-                y,
+                renderY,
                 (int) (x + renderWidth),
-                y + height,
+                renderY + height,
                 theme.getPrimaryColor().getRGB(),
                 theme.getSecondaryColor().getRGB()
         );
 
         if (hovered) {
-            guiGraphics.fill(x, y, x + width, y + height, ModMenuScreen.HOVER_COLOR.getRGB());
+            guiGraphics.fill(x, renderY, x + width, renderY + height, ModMenuScreen.HOVER_COLOR.getRGB());
         }
 
         final Font font = Minecraft.getInstance().font;
-        final int textY = y + (height - font.lineHeight) / 2;
+        final int textY = renderY + (height - font.lineHeight) / 2;
 
         guiGraphics.drawString(font, setting.getName(), x + 5, textY, Color.WHITE.getRGB());
 

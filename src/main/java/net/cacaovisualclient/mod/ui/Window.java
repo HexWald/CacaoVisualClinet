@@ -3,6 +3,8 @@ package net.cacaovisualclient.mod.ui;
 import lombok.Getter;
 import net.cacaovisualclient.mod.ui.modmenu.ModMenuScreen;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 
 import java.awt.*;
@@ -36,24 +38,24 @@ public class Window {
     public void init() {
         for (Widget widget : widgets) {
             widget.init();
-            maxScroll = Math.max(
-                    maxScroll,
-                    (widget.y + widget.height) - (y + height)
-            );
         }
 
-        maxScroll = Math.max(0, maxScroll + 10);
+        recalculateScroll();
     }
 
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        final int contentY = y + ModMenuScreen.BUTTON_TOP_MARGIN;
-        final int contentHeight = height - ModMenuScreen.BUTTON_TOP_MARGIN;
+        recalculateScroll();
 
-        guiGraphics.enableScissor(x, contentY, x + width, y + height);
+        final int contentY = getContentTop();
+        final int contentHeight = getContentBottom() - contentY;
+
+        guiGraphics.enableScissor(x, contentY, x + width, getContentBottom());
         for (Widget widget : widgets) {
             widget.render(guiGraphics, mouseX, mouseY, scrollOffset);
         }
         guiGraphics.disableScissor();
+
+        recalculateScroll();
 
         if (maxScroll > 10) {
             final int scrollbarWidth = 2;
@@ -68,6 +70,10 @@ public class Window {
 
     public void mouseClicked(MouseButtonEvent event) {
         for (Widget widget : widgets) {
+            widget.parentMouseClicked(event);
+        }
+
+        for (Widget widget : widgets) {
             if (widget.hovered) {
                 widget.mouseClicked(event);
             }
@@ -80,6 +86,26 @@ public class Window {
         }
     }
 
+    public boolean keyPressed(KeyEvent event) {
+        for (Widget widget : widgets) {
+            if (widget.keyPressed(event)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean charTyped(CharacterEvent event) {
+        for (Widget widget : widgets) {
+            if (widget.charTyped(event)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     protected void addWidget(Widget widget) {
         widgets.add(widget);
         widget.parent = this;
@@ -88,5 +114,27 @@ public class Window {
     public void mouseScrolled(double delta) {
         scrollOffset -= (int) (delta * 10);
         scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
+    }
+
+    protected void recalculateScroll() {
+        maxScroll = 0;
+
+        for (Widget widget : widgets) {
+            maxScroll = Math.max(
+                    maxScroll,
+                    (widget.y + widget.height) - getContentBottom()
+            );
+        }
+
+        maxScroll = Math.max(0, maxScroll + 10);
+        scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
+    }
+
+    protected int getContentTop() {
+        return y + ModMenuScreen.BUTTON_TOP_MARGIN;
+    }
+
+    protected int getContentBottom() {
+        return y + height;
     }
 }

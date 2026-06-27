@@ -3,6 +3,8 @@ package net.cacaovisualclient.mod.ui;
 import lombok.RequiredArgsConstructor;
 import net.cacaovisualclient.mod.utils.MouseUtils;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 
 @RequiredArgsConstructor
@@ -41,7 +43,18 @@ public class Widget {
     public void mouseClicked(MouseButtonEvent event) {
     }
 
+    public void parentMouseClicked(MouseButtonEvent event) {
+    }
+
     public void mouseReleased(MouseButtonEvent event) {
+    }
+
+    public boolean keyPressed(KeyEvent event) {
+        return false;
+    }
+
+    public boolean charTyped(CharacterEvent event) {
+        return false;
     }
 
 }

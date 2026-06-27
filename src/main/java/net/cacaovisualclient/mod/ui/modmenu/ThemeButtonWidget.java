@@ -27,6 +27,8 @@ public class ThemeButtonWidget extends Widget {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, int scrollOffset) {
         super.render(guiGraphics, mouseX, mouseY, scrollOffset);
 
+        final int renderY = y - scrollOffset;
+
         int borderColor = theme.getPrimaryColor().getRGB();
         int backgroundColor = ColorUtils.blendColors(ModMenuScreen.BASE_GRAY, ColorUtils.modifyAlpha(theme.getPrimaryColor(), 100)).getRGB();
 
@@ -35,12 +37,12 @@ public class ThemeButtonWidget extends Widget {
             borderColor = ColorUtils.blendColors(new Color(borderColor, true), ModMenuScreen.HOVER_COLOR).getRGB();
         }
 
-        guiGraphics.fill(x, y, x + width, y + height, borderColor);
+        guiGraphics.fill(x, renderY, x + width, renderY + height, borderColor);
         guiGraphics.fill(
                 x + BORDER_THICKNESS,
-                y + BORDER_THICKNESS,
+                renderY + BORDER_THICKNESS,
                 x + width - BORDER_THICKNESS,
-                y + height - BORDER_THICKNESS,
+                renderY + height - BORDER_THICKNESS,
                 backgroundColor
         );
 
@@ -49,7 +51,7 @@ public class ThemeButtonWidget extends Widget {
                 guiGraphics,
                 theme.getDisplayItem(),
                 x + width / 2,
-                y + height / 2,
+                renderY + height / 2,
                 2
         );
 
@@ -58,7 +60,7 @@ public class ThemeButtonWidget extends Widget {
                 font,
                 theme.getName(),
                 x + width / 2 - font.width(theme.getName()) / 2,
-                y + height - (BORDER_THICKNESS * 2) - 10,
+                renderY + height - (BORDER_THICKNESS * 2) - 10,
                 -1,
                 true
         );

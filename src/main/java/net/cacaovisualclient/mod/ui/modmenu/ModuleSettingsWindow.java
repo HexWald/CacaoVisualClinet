@@ -5,8 +5,10 @@ import net.cacaovisualclient.mod.module.settings.BooleanSetting;
 import net.cacaovisualclient.mod.module.settings.ModeSetting;
 import net.cacaovisualclient.mod.module.settings.NumberSetting;
 import net.cacaovisualclient.mod.module.settings.Setting;
+import net.cacaovisualclient.mod.module.modules.AutoGGModule;
 import net.cacaovisualclient.mod.ui.Widget;
 import net.cacaovisualclient.mod.ui.Window;
+import net.cacaovisualclient.mod.ui.modmenu.autogg.AutoGGPanelWidget;
 import net.cacaovisualclient.mod.ui.modmenu.setting.BooleanSettingWidget;
 import net.cacaovisualclient.mod.ui.modmenu.setting.ModeSettingWidget;
 import net.cacaovisualclient.mod.ui.modmenu.setting.NumberSettingWidget;
@@ -24,6 +26,7 @@ public class ModuleSettingsWindow extends Window {
     private static final int TOP_OFFSET = 14;
     private static final int TOP_BUTTON_HEIGHT = 14;
     private static final int TOP_BUTTON_WIDTH = 48;
+    private static final int CONTENT_RIGHT_PADDING = 12;
 
     private final Module module;
 
@@ -34,7 +37,7 @@ public class ModuleSettingsWindow extends Window {
 
     @Override
     public void init() {
-        super.init();
+        widgets.clear();
 
         int currentWidgetY = y + TOP_OFFSET + TOP_BUTTON_HEIGHT + 8;
 
@@ -48,7 +51,7 @@ public class ModuleSettingsWindow extends Window {
                         booleanSetting,
                         x,
                         currentWidgetY,
-                        ModMenuScreen.MENU_WIDTH,
+                        ModMenuScreen.MENU_WIDTH - CONTENT_RIGHT_PADDING,
                         widgetHeight
                 );
             } else if (setting instanceof ModeSetting modeSetting) {
@@ -56,7 +59,7 @@ public class ModuleSettingsWindow extends Window {
                         modeSetting,
                         x,
                         currentWidgetY,
-                        ModMenuScreen.MENU_WIDTH,
+                        ModMenuScreen.MENU_WIDTH - CONTENT_RIGHT_PADDING,
                         widgetHeight
                 );
             } else if (setting instanceof NumberSetting numberSetting) {
@@ -64,7 +67,7 @@ public class ModuleSettingsWindow extends Window {
                         numberSetting,
                         x,
                         currentWidgetY,
-                        ModMenuScreen.MENU_WIDTH,
+                        ModMenuScreen.MENU_WIDTH - CONTENT_RIGHT_PADDING,
                         widgetHeight
                 );
             }
@@ -74,6 +77,18 @@ public class ModuleSettingsWindow extends Window {
                 currentWidgetY += widgetHeight;
             }
         }
+
+        if (module instanceof AutoGGModule autoGGModule) {
+            currentWidgetY += 8;
+            addWidget(new AutoGGPanelWidget(
+                    autoGGModule,
+                    x,
+                    currentWidgetY,
+                    ModMenuScreen.MENU_WIDTH - CONTENT_RIGHT_PADDING
+            ));
+        }
+
+        super.init();
     }
 
     @Override
@@ -137,10 +152,11 @@ public class ModuleSettingsWindow extends Window {
             );
         }
 
+        final String backText = "< Back";
         guiGraphics.drawString(
                 font,
-                "← Back",
-                backX + TOP_BUTTON_WIDTH / 2 - font.width("← Back") / 2,
+                backText,
+                backX + TOP_BUTTON_WIDTH / 2 - font.width(backText) / 2,
                 buttonY + 3,
                 -1,
                 true
@@ -192,5 +208,10 @@ public class ModuleSettingsWindow extends Window {
         if (hoverReset) {
             module.reset();
         }
+    }
+
+    @Override
+    protected int getContentTop() {
+        return y + TOP_OFFSET + TOP_BUTTON_HEIGHT + 5;
     }
 }

@@ -23,12 +23,14 @@ public class BooleanSettingWidget extends Widget {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, int scrollOffset) {
         super.render(guiGraphics, mouseX, mouseY, scrollOffset);
 
+        final int renderY = y - scrollOffset;
+
         if (hovered) {
-            guiGraphics.fill(x, y, x + width, y + height, ModMenuScreen.HOVER_COLOR.getRGB());
+            guiGraphics.fill(x, renderY, x + width, renderY + height, ModMenuScreen.HOVER_COLOR.getRGB());
         }
 
         final Font font = Minecraft.getInstance().font;
-        final int textY = y + (height - font.lineHeight) / 2;
+        final int textY = renderY + (height - font.lineHeight) / 2;
 
         guiGraphics.drawString(font, setting.getName(), x + 5, textY, Color.WHITE.getRGB());
 

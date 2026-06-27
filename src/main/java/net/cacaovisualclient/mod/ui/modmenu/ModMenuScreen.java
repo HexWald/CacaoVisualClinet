@@ -6,6 +6,8 @@ import net.cacaovisualclient.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +21,7 @@ public class ModMenuScreen extends Screen {
 
     public static final int MENU_WIDTH = 400;
     public static int MENU_HEIGHT = 200;
-    public static final int MENU_TITLE_BAR_HEIGHT = 20;
+    public static final int MENU_TITLE_BAR_HEIGHT = 30;
 
     public static final int BUTTONS_PER_ROW = 4;
     public static final int BUTTON_SPACING = 10;
@@ -40,6 +42,8 @@ public class ModMenuScreen extends Screen {
 
     @Override
     protected void init() {
+        clearWidgets();
+
         startX = (mc.screen.width - MENU_WIDTH) / 2;
         startY = (mc.screen.height - MENU_HEIGHT) / 2;
 
@@ -51,8 +55,8 @@ public class ModMenuScreen extends Screen {
         final String profilesText = "Profiles";
 
         final int totalWidth = font.width(modsText) + font.width(themesText) + font.width(profilesText) + 2 * textSpacing;
-        final int startButtonX = startX + (MENU_WIDTH - totalWidth) / 2;
-        final int buttonY = startY + 15;
+        final int startButtonX = startX + MENU_WIDTH - totalWidth - 14;
+        final int buttonY = startY + 12;
 
         addRenderableWidget(RenderUtils.pressableText(
                 font,
@@ -75,7 +79,7 @@ public class ModMenuScreen extends Screen {
                 Component.literal(profilesText),
                 startButtonX + font.width(modsText) + textSpacing + font.width(themesText) + textSpacing,
                 buttonY,
-                () -> System.out.println("Profiles clicked"))
+                () -> switchWindow(new ProfilesTabWindow(this, "Profiles", startX, startY + MENU_TITLE_BAR_HEIGHT)))
         );
     }
 
@@ -83,17 +87,23 @@ public class ModMenuScreen extends Screen {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float f) {
         guiGraphics.fill(startX, startY, startX + MENU_WIDTH, startY + MENU_HEIGHT, new Color(0, 0, 0, 160).getRGB());
 
-        guiGraphics.renderItem(new ItemStack(CacaoVisualClient.getInstance().getSelectedTheme().getDisplayItem()), startX + 10, startY + 10);
+        guiGraphics.renderItem(new ItemStack(CacaoVisualClient.getInstance().getSelectedTheme().getDisplayItem()), startX + 10, startY + 8);
 
-        RenderUtils.scaledText(
-                guiGraphics.pose(),
-                guiGraphics,
+        guiGraphics.drawString(
+                font,
                 "CacaoVisualClient",
-                startX + mc.font.width("CacaoVisualClient") - 10,
-                startY + 15,
-                1.35f,
+                startX + 34,
+                startY + 13,
                 -1,
                 true
+        );
+
+        guiGraphics.fill(
+                startX + 6,
+                startY + MENU_TITLE_BAR_HEIGHT - 1,
+                startX + MENU_WIDTH - 6,
+                startY + MENU_TITLE_BAR_HEIGHT,
+                new Color(255, 255, 255, 20).getRGB()
         );
 
         currentWindow.render(guiGraphics, mouseX, mouseY);
@@ -116,6 +126,24 @@ public class ModMenuScreen extends Screen {
     public boolean mouseScrolled(double x, double y, double scrollX, double scrollY) {
         currentWindow.mouseScrolled(scrollY);
         return super.mouseScrolled(x, y, scrollX, scrollY);
+    }
+
+    @Override
+    public boolean keyPressed(KeyEvent event) {
+        if (currentWindow != null && currentWindow.keyPressed(event)) {
+            return true;
+        }
+
+        return super.keyPressed(event);
+    }
+
+    @Override
+    public boolean charTyped(CharacterEvent event) {
+        if (currentWindow != null && currentWindow.charTyped(event)) {
+            return true;
+        }
+
+        return super.charTyped(event);
     }
 
     public void switchToModulesTab() {
