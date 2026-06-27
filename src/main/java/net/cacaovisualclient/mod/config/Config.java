@@ -20,6 +20,6 @@ public class Config {
     public void setDefaultValues() {
         this.version = VERSION;
         this.currentProfile = "Default";
-        this.selectedTheme = "TUBE";
+        this.selectedTheme = "CACAO";
     }
 }

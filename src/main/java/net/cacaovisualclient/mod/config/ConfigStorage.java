@@ -30,7 +30,7 @@ public class ConfigStorage {
             config.setCurrentProfile("Default");
         }
         if (config.getSelectedTheme() == null || config.getSelectedTheme().isBlank()) {
-            config.setSelectedTheme("TUBE");
+            config.setSelectedTheme("CACAO");
         }
 
         config.setVersion(Config.VERSION);

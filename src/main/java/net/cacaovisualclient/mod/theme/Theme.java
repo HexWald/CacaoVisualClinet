@@ -13,6 +13,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public enum Theme {
 
+    CACAO("Cacao", Items.COCOA_BEANS, new Color(188, 104, 43), new Color(82, 45, 24)),
     TUBE("Tube", Items.TUBE_CORAL, new Color(47, 82, 194), new Color(47, 82, 194).darker()),
     BRAIN("Brain", Items.BRAIN_CORAL, new Color(195, 83, 150), new Color(195, 83, 150).darker()),
     BUBBLE("Bubble", Items.BUBBLE_CORAL, new Color(160, 24, 158), new Color(160, 24, 158).darker()),

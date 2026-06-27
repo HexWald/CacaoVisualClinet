@@ -98,8 +98,8 @@ public class CacaoVisualClient implements ClientModInitializer {
             final String configuredTheme = getConfig().getSelectedTheme();
 
             final Theme theme = Theme.fromConfigValue(configuredTheme).orElseGet(() -> {
-                LOGGER.warn("Unknown theme '{}', falling back to {}", configuredTheme, Theme.TUBE);
-                return Theme.TUBE;
+                LOGGER.warn("Unknown theme '{}', falling back to {}", configuredTheme, Theme.CACAO);
+                return Theme.CACAO;
             });
 
             setSelectedTheme(theme);
