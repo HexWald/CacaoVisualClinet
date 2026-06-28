@@ -6,9 +6,11 @@ import net.cacaovisualclient.mod.module.settings.ModeSetting;
 import net.cacaovisualclient.mod.module.settings.NumberSetting;
 import net.cacaovisualclient.mod.module.settings.Setting;
 import net.cacaovisualclient.mod.module.modules.AutoGGModule;
+import net.cacaovisualclient.mod.module.modules.CustomCrosshairModule;
 import net.cacaovisualclient.mod.ui.Widget;
 import net.cacaovisualclient.mod.ui.Window;
 import net.cacaovisualclient.mod.ui.modmenu.autogg.AutoGGPanelWidget;
+import net.cacaovisualclient.mod.ui.modmenu.crosshair.CrosshairPreviewWidget;
 import net.cacaovisualclient.mod.ui.modmenu.setting.BooleanSettingWidget;
 import net.cacaovisualclient.mod.ui.modmenu.setting.ModeSettingWidget;
 import net.cacaovisualclient.mod.ui.modmenu.setting.NumberSettingWidget;
@@ -82,6 +84,16 @@ public class ModuleSettingsWindow extends Window {
             currentWidgetY += 8;
             addWidget(new AutoGGPanelWidget(
                     autoGGModule,
+                    x,
+                    currentWidgetY,
+                    ModMenuScreen.MENU_WIDTH - CONTENT_RIGHT_PADDING
+            ));
+        }
+
+        if (module instanceof CustomCrosshairModule customCrosshairModule) {
+            currentWidgetY += 8;
+            addWidget(new CrosshairPreviewWidget(
+                    customCrosshairModule,
                     x,
                     currentWidgetY,
                     ModMenuScreen.MENU_WIDTH - CONTENT_RIGHT_PADDING

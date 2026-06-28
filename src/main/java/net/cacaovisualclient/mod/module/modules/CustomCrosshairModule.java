@@ -40,9 +40,19 @@ public class CustomCrosshairModule extends Module {
             return;
         }
 
-        final int centerX = guiGraphics.guiWidth() / 2;
-        final int centerY = guiGraphics.guiHeight() / 2;
-        final float hitAmount = getHitAnimationAmount();
+        renderAt(
+                guiGraphics,
+                guiGraphics.guiWidth() / 2,
+                guiGraphics.guiHeight() / 2,
+                getHitAnimationAmount()
+        );
+    }
+
+    public void renderPreview(GuiGraphics guiGraphics, int centerX, int centerY, float hitAmount) {
+        renderAt(guiGraphics, centerX, centerY, hitAnimation.getValue() ? hitAmount : 0.0F);
+    }
+
+    private void renderAt(GuiGraphics guiGraphics, int centerX, int centerY, float hitAmount) {
         final float contraction = 1.0F - hitAmount * (hitAnimationStrength.getValue().floatValue() / 100.0F);
         final int crosshairSize = Math.max(1, Math.round(size.getValue().floatValue() * (0.75F + contraction * 0.25F)));
         final int crosshairGap = Math.max(0, Math.round(gap.getValue().floatValue() * contraction));
