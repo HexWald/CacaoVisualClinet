@@ -53,10 +53,18 @@ public class ModMenuScreen extends Screen {
         final String modsText = "Mods";
         final String themesText = "Themes";
         final String profilesText = "Profiles";
+        final String aboutText = "About";
 
-        final int totalWidth = font.width(modsText) + font.width(themesText) + font.width(profilesText) + 2 * textSpacing;
+        final int totalWidth = font.width(modsText)
+                + font.width(themesText)
+                + font.width(profilesText)
+                + font.width(aboutText)
+                + 3 * textSpacing;
         final int startButtonX = startX + MENU_WIDTH - totalWidth - 14;
         final int buttonY = startY + 12;
+        final int themesX = startButtonX + font.width(modsText) + textSpacing;
+        final int profilesX = themesX + font.width(themesText) + textSpacing;
+        final int aboutX = profilesX + font.width(profilesText) + textSpacing;
 
         addRenderableWidget(RenderUtils.pressableText(
                 font,
@@ -69,7 +77,7 @@ public class ModMenuScreen extends Screen {
         addRenderableWidget(RenderUtils.pressableText(
                 font,
                 Component.literal(themesText),
-                startButtonX + font.width(modsText) + textSpacing,
+                themesX,
                 buttonY,
                 () -> switchWindow(new ThemesTabWindow(this, "Themes", startX, startY + MENU_TITLE_BAR_HEIGHT)))
         );
@@ -77,9 +85,17 @@ public class ModMenuScreen extends Screen {
         addRenderableWidget(RenderUtils.pressableText(
                 font,
                 Component.literal(profilesText),
-                startButtonX + font.width(modsText) + textSpacing + font.width(themesText) + textSpacing,
+                profilesX,
                 buttonY,
                 () -> switchWindow(new ProfilesTabWindow(this, "Profiles", startX, startY + MENU_TITLE_BAR_HEIGHT)))
+        );
+
+        addRenderableWidget(RenderUtils.pressableText(
+                font,
+                Component.literal(aboutText),
+                aboutX,
+                buttonY,
+                () -> switchWindow(new AboutTabWindow(this, "About", startX, startY + MENU_TITLE_BAR_HEIGHT)))
         );
     }
 
