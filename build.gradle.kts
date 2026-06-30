@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.loom)
 }
 
-version = "0.8.3"
+version = "0.8.4"
 group = "net.cacaovisualclient.mod"
 
 dependencies {
