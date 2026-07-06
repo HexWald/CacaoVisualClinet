@@ -10,6 +10,16 @@ This is not a strict promise list. It is a working note for the next parts of th
 - keep BedWars alerts compact and useful instead of turning the screen into a notice board
 - add a few good default presets for crosshair and viewmodel settings
 
+## Daily polish queue
+
+Small changes that are worth doing between bigger feature passes:
+
+- add a proper preview block for every visual module that has color or animation settings
+- make hit feedback easier to test from settings, without joining a server first
+- keep all new features configurable from the client UI, not only through config files
+- write short release notes while testing, so the final changelog is based on real checks
+- remove anything that looks nice in screenshots but feels annoying during PvP
+
 ## Client feel
 
 The client should stay fast and quiet. A good feature here is something you notice when it helps, not something that shouts at you every second.
