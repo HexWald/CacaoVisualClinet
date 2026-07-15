@@ -1,18 +1,18 @@
 # CacaoVisualClient
 
-CacaoVisualClient is a small Fabric client for Minecraft 1.21.11 focused on PvP comfort, clean visuals, and BedWars quality-of-life.
+CacaoVisualClient is a Fabric client for Minecraft 1.21.11 focused on PvP visuals, BedWars tools, and settings that can be changed in-game.
 
-It started as a fork of CoralMod, but the goal is different now: make a lightweight client that feels nice to use every match without turning the game into a mess of noisy overlays.
+It started as a CoralMod fork. The client is moving toward its own Cacao style now: darker UI, small animated feedback, and fewer giant overlays fighting for the screen.
 
 Maintained by [HexWald](https://github.com/HexWald).
 
 ## What it does
 
-- keeps useful PvP info visible without covering half of the screen
+- keeps PvP info visible without covering half of the screen
 - adds small visual feedback for hits, low HP, BedWars events, and round results
-- lets you tweak HUD elements, crosshair, viewmodel, and first-person sword animations
+- lets you edit HUD elements, crosshair, viewmodel, and first-person sword animations
 - saves different setups through profiles
-- keeps the UI simple enough to change settings in-game
+- keeps normal setup inside the UI instead of hiding it behind chat commands
 
 ## Installation
 
@@ -32,11 +32,11 @@ Maintained by [HexWald](https://github.com/HexWald).
 - `Viewmodel Editor` for first-person item position, rotation, and scale.
 - `Sword Inspect` with CS-style inspect animations on `V`.
 
-### BedWars polish
+### BedWars
 
 - `AutoGG` with custom patterns and server-specific triggers.
 - `BedWars Alerts` for bed breaks, final kills, victory, and defeat.
-- compact Cacao toasts instead of huge center-screen noise.
+- compact Cacao toasts instead of huge center-screen messages.
 
 ### HUD and utility
 
@@ -54,14 +54,14 @@ Maintained by [HexWald](https://github.com/HexWald).
 | C | Zoom |
 | V | Sword inspect |
 
-## Current focus
+## Current work
 
-The next big step is making the client feel more like a serious all-in-one PvP client:
+The next pass is mostly about making the client easier to use during a real match:
 
-- better mod menu navigation
+- better Mods screen navigation
 - cleaner HUD editing
-- stronger BedWars tools
+- BedWars tools that are useful without being loud
 - profile sharing
-- more polished crosshair and viewmodel presets
+- crosshair and viewmodel presets that do not get in the way of PvP
 
-No promises about becoming a giant client overnight. The plan is to keep it fast, readable, and actually useful.
+If a feature looks good in a screenshot but feels bad in a fight, it does not belong enabled by default.
