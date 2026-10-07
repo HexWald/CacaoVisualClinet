@@ -9,6 +9,8 @@ Use this before cutting a CacaoVisualClient jar. Do not trust a UI change until 
 - Open settings for every enabled visual module.
 - Change a setting, close the screen, open it again, and check that the value stayed.
 - Restart the game once and check that the same config is loaded.
+- Try creating and renaming profiles to `CON`, `NUL`, `COM1`, and a name ending in a dot. Check that they are rejected.
+- Create `PvP`, then try creating `pvp`. Check that the first profile is kept.
 
 ## HUD editor
 

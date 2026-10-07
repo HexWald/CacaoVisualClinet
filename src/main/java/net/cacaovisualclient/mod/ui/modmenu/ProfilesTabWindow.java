@@ -3,6 +3,7 @@ package net.cacaovisualclient.mod.ui.modmenu;
 import net.cacaovisualclient.mod.CacaoVisualClient;
 import net.cacaovisualclient.mod.config.profile.Profile;
 import net.cacaovisualclient.mod.config.profile.ProfileManager;
+import net.cacaovisualclient.mod.config.profile.ProfileNames;
 import net.cacaovisualclient.mod.ui.Widget;
 import net.cacaovisualclient.mod.ui.Window;
 import net.cacaovisualclient.mod.utils.ColorUtils;
@@ -268,8 +269,8 @@ public class ProfilesTabWindow extends Window {
                 return;
             }
 
-            if (hasUnsafeFileChars(name)) {
-                setStatus("Name has unsafe characters");
+            if (!ProfileNames.isValid(name)) {
+                setStatus("Use a valid profile file name");
                 return;
             }
 
@@ -342,24 +343,12 @@ public class ProfilesTabWindow extends Window {
                 return false;
             }
 
-            if (hasUnsafeFileChars(name)) {
-                setStatus("Name has unsafe characters");
+            if (!ProfileNames.isValid(name)) {
+                setStatus("Use a valid profile file name");
                 return false;
             }
 
             return true;
-        }
-
-        private boolean hasUnsafeFileChars(String name) {
-            return name.indexOf('\\') >= 0
-                    || name.indexOf('/') >= 0
-                    || name.indexOf(':') >= 0
-                    || name.indexOf('*') >= 0
-                    || name.indexOf('?') >= 0
-                    || name.indexOf('"') >= 0
-                    || name.indexOf('<') >= 0
-                    || name.indexOf('>') >= 0
-                    || name.indexOf('|') >= 0;
         }
 
         private String getActiveProfileName() {

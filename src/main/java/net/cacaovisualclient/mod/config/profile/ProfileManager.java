@@ -54,7 +54,7 @@ public class ProfileManager {
 
     public Profile getProfile(String name) {
         return profiles.stream()
-                .filter(profile -> profile.getName().equals(name))
+                .filter(profile -> profile.getName().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);
     }
@@ -65,7 +65,7 @@ public class ProfileManager {
 
     public boolean createProfile(String name) {
         final String cleanName = name == null ? "" : name.trim();
-        if (cleanName.isBlank() || getProfile(cleanName) != null) {
+        if (!ProfileNames.isValid(cleanName) || getProfile(cleanName) != null) {
             return false;
         }
 
@@ -78,7 +78,7 @@ public class ProfileManager {
 
     public boolean duplicateProfile(String sourceName, String targetName) {
         final String cleanTarget = targetName == null ? "" : targetName.trim();
-        if (getProfile(sourceName) == null || cleanTarget.isBlank() || getProfile(cleanTarget) != null) {
+        if (getProfile(sourceName) == null || !ProfileNames.isValid(cleanTarget) || getProfile(cleanTarget) != null) {
             return false;
         }
 
@@ -93,7 +93,7 @@ public class ProfileManager {
     public boolean renameProfile(String sourceName, String targetName) {
         final String cleanTarget = targetName == null ? "" : targetName.trim();
         final Profile source = getProfile(sourceName);
-        if (source == null || cleanTarget.isBlank() || getProfile(cleanTarget) != null) {
+        if (source == null || !ProfileNames.isValid(cleanTarget) || getProfile(cleanTarget) != null) {
             return false;
         }
 

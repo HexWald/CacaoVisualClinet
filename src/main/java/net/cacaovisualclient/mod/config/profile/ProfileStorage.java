@@ -55,18 +55,28 @@ public class ProfileStorage {
     }
 
     public void save(Profile profile) {
+        if (!ProfileNames.isValid(profile.getName())) {
+            CacaoVisualClient.LOGGER.warn("Cannot save profile with an invalid file name: {}", profile.getName());
+            return;
+        }
         JsonUtils.saveToJson(gson, new File(PROFILE_DIR, profile.getName() + ".json"), profile);
     }
 
     public Profile load(String name) {
+        if (!ProfileNames.isValid(name)) {
+            return null;
+        }
         return JsonUtils.loadFromJson(gson, new File(PROFILE_DIR, name + ".json"), Profile.class);
     }
 
     public boolean delete(String name) {
-        return new File(PROFILE_DIR, name + ".json").delete();
+        return ProfileNames.isValid(name) && new File(PROFILE_DIR, name + ".json").delete();
     }
 
     public boolean copy(String sourceName, String targetName) {
+        if (!ProfileNames.isValid(sourceName) || !ProfileNames.isValid(targetName)) {
+            return false;
+        }
         final File source = new File(PROFILE_DIR, sourceName + ".json");
         final File target = new File(PROFILE_DIR, targetName + ".json");
 
@@ -103,8 +113,8 @@ public class ProfileStorage {
             final String fallbackName = file.getName().substring(0, file.getName().length() - 5);
             final String name = root.has("name") ? root.get("name").getAsString() : fallbackName;
 
-            if (name.isBlank()) {
-                throw new IllegalStateException("Profile name is empty");
+            if (!ProfileNames.isValid(name)) {
+                throw new IllegalStateException("Profile name is not a valid file name");
             }
 
             return new Profile(name, List.of());
