@@ -27,4 +27,13 @@ public class NumberSetting extends Setting<Double> {
     public void read(JsonElement json) {
         setValue(json.getAsDouble());
     }
+
+    @Override
+    public void setValue(Double value) {
+        if (value == null || !Double.isFinite(value)) {
+            throw new IllegalArgumentException("Setting " + getName() + " requires a finite number");
+        }
+
+        super.setValue(Math.max(min, Math.min(max, value)));
+    }
 }
