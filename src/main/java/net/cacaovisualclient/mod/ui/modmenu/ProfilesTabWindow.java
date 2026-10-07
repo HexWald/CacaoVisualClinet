@@ -275,7 +275,7 @@ public class ProfilesTabWindow extends Window {
             }
 
             if (!profileManager.createProfile(name)) {
-                setStatus("Profile already exists");
+                setStatus("Profile already exists or could not be saved");
                 return;
             }
 

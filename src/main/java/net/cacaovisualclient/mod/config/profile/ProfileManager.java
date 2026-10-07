@@ -27,9 +27,9 @@ public class ProfileManager {
 
         this.profiles = new ArrayList<>(storage.loadProfiles());
 
-        if (profiles.isEmpty()) {
-            // Create default profile if no profiles exist
-            createProfile(DEFAULT_PROFILE_NAME);
+        if (profiles.isEmpty() && !createProfile(DEFAULT_PROFILE_NAME)) {
+            CacaoVisualClient.LOGGER.warn("Could not save the default profile, keeping it in memory");
+            profiles.add(new Profile(DEFAULT_PROFILE_NAME, moduleManager.getEnabledModules()));
         }
 
         final Profile requestedProfile = getProfile(config.getCurrentProfile());
@@ -70,7 +70,9 @@ public class ProfileManager {
         }
 
         final Profile profile = new Profile(cleanName, moduleManager.getEnabledModules());
-        storage.save(profile);
+        if (!storage.save(profile)) {
+            return false;
+        }
         profiles.add(profile);
         setCurrentProfile(profile);
         return true;

@@ -54,12 +54,12 @@ public class ProfileStorage {
         return profileList;
     }
 
-    public void save(Profile profile) {
+    public boolean save(Profile profile) {
         if (!ProfileNames.isValid(profile.getName())) {
             CacaoVisualClient.LOGGER.warn("Cannot save profile with an invalid file name: {}", profile.getName());
-            return;
+            return false;
         }
-        JsonUtils.saveToJson(gson, new File(PROFILE_DIR, profile.getName() + ".json"), profile);
+        return JsonUtils.saveToJson(gson, new File(PROFILE_DIR, profile.getName() + ".json"), profile);
     }
 
     public Profile load(String name) {
@@ -87,8 +87,7 @@ public class ProfileStorage {
         try (Reader reader = Files.newBufferedReader(source.toPath(), StandardCharsets.UTF_8)) {
             final JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             root.addProperty("name", targetName);
-            JsonUtils.saveToJson(target, root);
-            return true;
+            return JsonUtils.saveToJson(target, root);
         } catch (IOException | RuntimeException e) {
             CacaoVisualClient.LOGGER.error("Failed to copy profile {} to {}", sourceName, targetName, e);
             return false;
