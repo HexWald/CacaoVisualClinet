@@ -2,11 +2,9 @@ package net.cacaovisualclient.mod.module.modules;
 
 import lombok.Getter;
 import net.cacaovisualclient.mod.CacaoVisualClient;
-import net.cacaovisualclient.mod.event.KeyPressedEvent;
 import net.cacaovisualclient.mod.module.Module;
 import net.cacaovisualclient.mod.module.ModuleInfo;
-import net.cacaovisualclient.mod.utils.KeyUtils;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Options;
 
 @ModuleInfo(name = "Zoom", description = "Zooms in the game")
@@ -17,18 +15,19 @@ public class ZoomModule extends Module {
 
     private int oldFov;
     private double oldSensitivity;
+    private boolean oldSmoothCamera;
 
     public ZoomModule() {
-        KeyPressedEvent.KEY_PRESSED_EVENT.register(key -> {
-            if (!isEnabled()) {
-                return;
-            }
+        ClientTickEvents.START_CLIENT_TICK.register(client -> {
+            final boolean shouldZoom = isEnabled()
+                    && client.player != null
+                    && client.screen == null
+                    && client.isWindowActive()
+                    && CacaoVisualClient.ZOOM_KEY_MAPPING.isDown();
 
-            final boolean keyPressed = KeyUtils.isKeyPressed(KeyBindingHelper.getBoundKeyOf(CacaoVisualClient.ZOOM_KEY_MAPPING).getValue());
-
-            if (keyPressed && !zooming) {
+            if (shouldZoom && !zooming) {
                 startZooming();
-            } else if (!keyPressed && zooming) {
+            } else if (!shouldZoom && zooming) {
                 stopZooming();
             }
         });
@@ -54,6 +53,7 @@ public class ZoomModule extends Module {
 
         oldFov = options.fov().get();
         oldSensitivity = options.sensitivity().get();
+        oldSmoothCamera = options.smoothCamera;
 
         options.fov().set(30);
         options.smoothCamera = true;
@@ -70,7 +70,7 @@ public class ZoomModule extends Module {
         final Options options = mc.options;
 
         options.fov().set(oldFov);
-        options.smoothCamera = false;
+        options.smoothCamera = oldSmoothCamera;
         options.sensitivity().set(oldSensitivity);
 
         zooming = false;

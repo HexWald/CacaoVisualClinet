@@ -23,6 +23,10 @@ Use this before cutting a CacaoVisualClient jar. Do not trust a UI change until 
 - Test hit animation from settings.
 - Hit an entity in-game and check that the animation is centered.
 - Check low HP effect at low health and after healing.
+- Hold zoom, then open chat or the pause menu. Check that FOV and sensitivity return to normal.
+- Check zoom after releasing its key, switching windows, and leaving a world.
+- Enable cinematic camera before zooming and check that it stays enabled afterward.
+- Rebind zoom to a mouse button and check that holding and releasing it works.
 
 ## Release sanity
 
