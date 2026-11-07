@@ -1,5 +1,6 @@
 package net.cacaovisualclient.mod.mixin;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.cacaovisualclient.mod.CacaoVisualClient;
 import net.cacaovisualclient.mod.event.TitleTextEvent;
 import net.cacaovisualclient.mod.module.HudModule;
@@ -16,12 +17,14 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.scores.Objective;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Gui.class)
@@ -59,42 +62,27 @@ public abstract class GuiMixin {
             hudModule.render(guiGraphics, getFont());
         }
 
-        final HitmarkerModule hitmarkerModule = CacaoVisualClient.getInstance()
-                .getModuleManager()
-                .getModule(HitmarkerModule.class);
-
-        if (hitmarkerModule != null) {
-            hitmarkerModule.renderKillConfirm(guiGraphics, getFont());
-        }
-
         Notification.render(guiGraphics, getFont());
     }
 
-    @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
-    private void onRenderCustomCrosshair(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo info) {
-        final CustomCrosshairModule customCrosshairModule = CacaoVisualClient.getInstance()
-                .getModuleManager()
-                .getModule(CustomCrosshairModule.class);
-
-        if (customCrosshairModule != null && customCrosshairModule.isEnabled()) {
-            customCrosshairModule.render(guiGraphics);
-            renderHitmarker(guiGraphics);
-            info.cancel();
+    @Redirect(method = "renderCrosshair", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V",
+            ordinal = 0))
+    private void drawCrosshair(GuiGraphics graphics, RenderPipeline pipeline, Identifier sprite,
+                               int x, int y, int width, int height) {
+        var player = Minecraft.getInstance().player;
+        boolean playing = player != null && !player.isSpectator();
+        CustomCrosshairModule crosshair = CacaoVisualClient.getModule(CustomCrosshairModule.class);
+        boolean custom = playing && crosshair != null && crosshair.isEnabled();
+        if (custom) {
+            crosshair.render(graphics);
+        } else {
+            graphics.blitSprite(pipeline, sprite, x, y, width, height);
         }
-    }
-
-    @Inject(method = "renderCrosshair", at = @At("TAIL"))
-    private void onRenderCrosshair(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo info) {
-        renderHitmarker(guiGraphics);
-    }
-
-    private static void renderHitmarker(GuiGraphics guiGraphics) {
-        final HitmarkerModule hitmarkerModule = CacaoVisualClient.getInstance()
-                .getModuleManager()
-                .getModule(HitmarkerModule.class);
-
-        if (hitmarkerModule != null) {
-            hitmarkerModule.renderCrosshair(guiGraphics);
+        HitmarkerModule marker = CacaoVisualClient.getModule(HitmarkerModule.class);
+        if (playing && marker != null) {
+            marker.renderCrosshair(graphics, custom ? graphics.guiWidth() / 2 : x + width / 2,
+                    custom ? graphics.guiHeight() / 2 : y + height / 2);
         }
     }
 

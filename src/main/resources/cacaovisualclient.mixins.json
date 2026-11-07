@@ -13,7 +13,7 @@
     "GuiMixin",
     "LivingEntityRendererMixin",
     "MouseHandlerMixin",
-    "MultiPlayerGameModeMixin",
+    "ClientPacketListenerMixin",
     "UnitDoubleMixin",
     "ItemInHandRendererMixin",
     "ScreenEffectRendererMixin",

@@ -1,15 +1,12 @@
 package net.cacaovisualclient.mod.module.modules;
 
 import net.cacaovisualclient.mod.CacaoVisualClient;
-import net.cacaovisualclient.mod.event.MouseButtonClickedEvent;
 import net.cacaovisualclient.mod.module.Module;
 import net.cacaovisualclient.mod.module.ModuleInfo;
 import net.cacaovisualclient.mod.module.settings.BooleanSetting;
 import net.cacaovisualclient.mod.module.settings.ModeSetting;
 import net.cacaovisualclient.mod.module.settings.NumberSetting;
-import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.gui.GuiGraphics;
-import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 import java.util.List;
@@ -32,7 +29,6 @@ public class CustomCrosshairModule extends Module {
 
     public CustomCrosshairModule() {
         addSettings(style, size, gap, thickness, hitAnimation, hitAnimationStrength, dot, outline);
-        MouseButtonClickedEvent.MOUSE_BUTTON_CLICKED_EVENT.register(this::handleMouseClick);
     }
 
     public void render(GuiGraphics guiGraphics) {
@@ -72,16 +68,10 @@ public class CustomCrosshairModule extends Module {
         }
     }
 
-    private void handleMouseClick(MouseButtonInfo mouseButtonInfo) {
-        if (!isEnabled()
-                || mc.player == null
-                || mc.level == null
-                || mc.screen != null
-                || mouseButtonInfo.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            return;
+    public void onHit() {
+        if (isEnabled() && mc.screen == null) {
+            lastHitAtNanos = System.nanoTime();
         }
-
-        lastHitAtNanos = System.nanoTime();
     }
 
     private float getHitAnimationAmount() {
