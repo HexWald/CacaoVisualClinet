@@ -13,6 +13,8 @@ public class BedWarsMessageParser {
     private static final Pattern TEAM_BED_PATTERN = Pattern.compile(
             "(?i)\\b(red|blue|green|yellow|aqua|white|pink|gray|grey) bed (?:was )?(?:destroyed|broken)(?: by ([^!]+))?"
     );
+    private static final Pattern VICTORY = Pattern.compile("(?:victory|you won(?: (?:the|this) (?:game|match|round))?)[!.]*");
+    private static final Pattern DEFEAT = Pattern.compile("(?:defeat|game over|you lost(?: (?:the|this) (?:game|match|round))?)[!.]*");
 
     public Optional<BedWarsNotice> parse(String rawMessage, String playerName) {
         final String message = MessageUtils.clean(rawMessage);
@@ -22,7 +24,7 @@ public class BedWarsMessageParser {
             return Optional.empty();
         }
 
-        if (isVictory(lower)) {
+        if (VICTORY.matcher(lower).matches()) {
             return Optional.of(new BedWarsNotice(
                     BedWarsNoticeType.MATCH_RESULT,
                     CacaoToastType.SUCCESS,
@@ -32,7 +34,7 @@ public class BedWarsMessageParser {
             ));
         }
 
-        if (isDefeat(lower)) {
+        if (DEFEAT.matcher(lower).matches()) {
             return Optional.of(new BedWarsNotice(
                     BedWarsNoticeType.MATCH_RESULT,
                     CacaoToastType.DANGER,
@@ -116,19 +118,6 @@ public class BedWarsMessageParser {
                 playerKilled ? "You eliminated a player" : cleaned,
                 "final:" + MessageUtils.clean(message).toLowerCase(Locale.ROOT)
         ));
-    }
-
-    private static boolean isVictory(String lower) {
-        return lower.equals("victory!")
-                || lower.equals("victory")
-                || lower.contains("you won");
-    }
-
-    private static boolean isDefeat(String lower) {
-        return lower.equals("defeat!")
-                || lower.equals("defeat")
-                || lower.contains("game over")
-                || lower.contains("you lost");
     }
 
     private static String normalizeTeamName(String rawTeam) {
