@@ -22,7 +22,11 @@ public class ModeSetting extends Setting<String> {
     }
 
     @Override
-    public void read(JsonElement json) {
-        setValue(json.getAsString());
+    public String parse(JsonElement json) {
+        String saved = json.getAsString();
+        return modes.stream()
+                .filter(mode -> mode.equalsIgnoreCase(saved))
+                .findFirst()
+                .orElse(getDefaultValue());
     }
 }

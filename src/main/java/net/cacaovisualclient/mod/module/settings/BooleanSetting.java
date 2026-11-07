@@ -15,7 +15,10 @@ public class BooleanSetting extends Setting<Boolean> {
     }
 
     @Override
-    public void read(JsonElement json) {
-        setValue(json.getAsBoolean());
+    public Boolean parse(JsonElement json) {
+        if (!json.getAsJsonPrimitive().isBoolean()) {
+            throw new IllegalArgumentException(getName() + " must be true or false");
+        }
+        return json.getAsBoolean();
     }
 }

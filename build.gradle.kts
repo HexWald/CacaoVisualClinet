@@ -23,6 +23,7 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    workingDir(layout.buildDirectory)
 }
 
 tasks.processResources {

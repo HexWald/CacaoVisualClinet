@@ -47,6 +47,10 @@ public abstract class Setting<T> {
 
     public abstract JsonElement write();
 
-    public abstract void read(JsonElement json);
+    public final void read(JsonElement json) {
+        setValue(parse(json));
+    }
+
+    public abstract T parse(JsonElement json);
 
 }

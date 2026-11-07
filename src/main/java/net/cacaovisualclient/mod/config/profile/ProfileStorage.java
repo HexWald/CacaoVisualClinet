@@ -26,7 +26,10 @@ public class ProfileStorage {
     private final Gson gson;
 
     public ProfileStorage(ModuleManager moduleManager) {
-        this.gson = new GsonBuilder().registerTypeAdapter(Profile.class, new ProfileTypeAdapter(moduleManager)).setPrettyPrinting().create();
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(Profile.class, new ProfileTypeAdapter(moduleManager.getModules()))
+                .setPrettyPrinting()
+                .create();
 
         PROFILE_DIR.mkdirs();
     }
