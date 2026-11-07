@@ -10,8 +10,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.Identifier;
-
-import java.awt.*;
+import org.joml.Matrix3x2fStack;
 
 @ModuleInfo(name = "Server Address", description = "Displays the server address")
 public class ServerAddressModule extends HudModule {
@@ -40,38 +39,34 @@ public class ServerAddressModule extends HudModule {
 
     @Override
     public void render(GuiGraphics guiGraphics, Font font) {
-        final String text = brackets.getValue() ? "[" + getText() + "]" : getText();
-
-        final int textWidth = font.width(text);
-        final int textHeight = font.lineHeight;
-
+        final float factor = scaleFactor();
         final int padding = background.getValue() ? 2 : 0;
-        final int iconSize = showServerIcon.getValue() && currentServerIcon != null ? this.serverIconSize.getValue().intValue() : 0;
-
-        setWidth(iconSize + (showServerIcon.getValue() ? 4 : 0) + textWidth + padding * 2);
-        setHeight(Math.max(iconSize, textHeight) + padding * 2);
-
-        if (background.getValue()) {
-            guiGraphics.fill(
-                    getX(),
-                    getY(),
-                    getX() + getWidth(),
-                    getY() + getHeight(),
-                    new Color(0, 0, 0, 140).getRGB()
-            );
+        final int iconSize = showServerIcon.getValue() && currentServerIcon != null
+                ? serverIconSize.getValue().intValue() : 0;
+        final int textX = padding + (iconSize > 0 ? iconSize + 4 : 0);
+        final int rowHeight = Math.max(iconSize, font.lineHeight);
+        final int maxTextWidth = Math.max(0, (int) (guiGraphics.guiWidth() / (double) factor) - textX - padding);
+        final boolean wrap = brackets.getValue();
+        final String address = getText();
+        String text = wrap ? "[" + address + "]" : address;
+        if (font.width(text) > maxTextWidth) {
+            final String end = wrap ? "...]" : "...";
+            final int remaining = maxTextWidth - font.width(end);
+            text = remaining > 0 ? font.plainSubstrByWidth(text, remaining) + end
+                    : font.plainSubstrByWidth(text, maxTextWidth);
         }
+        layout(guiGraphics, textX + font.width(text) + padding, rowHeight + padding * 2);
 
-        if (showServerIcon.getValue() && currentServerIcon != null) {
-            final int iconX = getX() + padding;
-            final int iconY = getY() + padding + (getHeight() - padding * 2 - iconSize) / 2;
-
-            RenderUtils.drawTexture(guiGraphics, currentServerIcon, iconX, iconY, iconSize);
+        Matrix3x2fStack pose = guiGraphics.pose();
+        pose.pushMatrix();
+        pose.translate(getX(), getY());
+        pose.scale(factor, factor);
+        if (iconSize > 0) {
+            RenderUtils.drawTexture(guiGraphics, currentServerIcon, padding, padding + (rowHeight - iconSize) / 2, iconSize);
         }
-
-        final int textX = getX() + padding + iconSize + (showServerIcon.getValue() ? 4 : 0);
-        final int textY = getY() + padding + (getHeight() - padding * 2 - textHeight) / 2;
-
+        final int textY = padding + (rowHeight - font.lineHeight) / 2;
         guiGraphics.drawString(font, text, textX, textY + 1, -1, textShadow.getValue());
+        pose.popMatrix();
     }
 
 
