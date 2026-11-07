@@ -15,6 +15,7 @@ public class ModulesTabWindow extends Window {
                 CacaoVisualClient.getInstance().getModuleManager().getModules(),
                 x,
                 y,
+                width,
                 (module, pos) -> {
                     addWidget(new ModuleButtonWidget(
                             module,

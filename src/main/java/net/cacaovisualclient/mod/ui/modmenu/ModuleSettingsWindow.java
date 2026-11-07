@@ -53,7 +53,7 @@ public class ModuleSettingsWindow extends Window {
                         booleanSetting,
                         x,
                         currentWidgetY,
-                        ModMenuScreen.MENU_WIDTH - CONTENT_RIGHT_PADDING,
+                        width - CONTENT_RIGHT_PADDING,
                         widgetHeight
                 );
             } else if (setting instanceof ModeSetting modeSetting) {
@@ -61,7 +61,7 @@ public class ModuleSettingsWindow extends Window {
                         modeSetting,
                         x,
                         currentWidgetY,
-                        ModMenuScreen.MENU_WIDTH - CONTENT_RIGHT_PADDING,
+                        width - CONTENT_RIGHT_PADDING,
                         widgetHeight
                 );
             } else if (setting instanceof NumberSetting numberSetting) {
@@ -69,7 +69,7 @@ public class ModuleSettingsWindow extends Window {
                         numberSetting,
                         x,
                         currentWidgetY,
-                        ModMenuScreen.MENU_WIDTH - CONTENT_RIGHT_PADDING,
+                        width - CONTENT_RIGHT_PADDING,
                         widgetHeight
                 );
             }
@@ -86,7 +86,7 @@ public class ModuleSettingsWindow extends Window {
                     autoGGModule,
                     x,
                     currentWidgetY,
-                    ModMenuScreen.MENU_WIDTH - CONTENT_RIGHT_PADDING
+                    width - CONTENT_RIGHT_PADDING
             ));
         }
 
@@ -96,7 +96,7 @@ public class ModuleSettingsWindow extends Window {
                     customCrosshairModule,
                     x,
                     currentWidgetY,
-                    ModMenuScreen.MENU_WIDTH - CONTENT_RIGHT_PADDING
+                    width - CONTENT_RIGHT_PADDING
             ));
         }
 
@@ -114,7 +114,7 @@ public class ModuleSettingsWindow extends Window {
             guiGraphics.drawString(
                     font,
                     "This module has no settings",
-                    x + ModMenuScreen.MENU_WIDTH / 2 - font.width("This module has no settings") / 2,
+                    x + width / 2 - font.width("This module has no settings") / 2,
                     getParent().height / 2,
                     new Color(255, 255, 255, 100).getRGB(),
                     true
@@ -189,7 +189,7 @@ public class ModuleSettingsWindow extends Window {
         guiGraphics.fill(
                 x + 6,
                 dividerY,
-                x + ModMenuScreen.MENU_WIDTH - 6,
+                x + width - 6,
                 dividerY + 1,
                 new Color(255, 255, 255, 20).getRGB()
         );

@@ -19,6 +19,7 @@ public class ThemesTabWindow extends Window {
                 Arrays.stream(Theme.values()).toList(),
                 x,
                 y,
+                width,
                 (theme, pos) -> {
                     addWidget(new ThemeButtonWidget(
                             theme,

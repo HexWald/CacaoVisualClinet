@@ -10,12 +10,13 @@ public class GridUtil {
             Iterable<T> elements,
             int x,
             int y,
+            int width,
             BiConsumer<T, Position> consumer
     ) {
         final int totalSpacing = (ModMenuScreen.BUTTONS_PER_ROW - 1) * ModMenuScreen.BUTTON_SPACING;
-        final int buttonWidth = (ModMenuScreen.MENU_WIDTH - 2 * ModMenuScreen.BUTTON_SPACING - totalSpacing) / ModMenuScreen.BUTTONS_PER_ROW;
+        final int buttonWidth = (width - 2 * ModMenuScreen.BUTTON_SPACING - totalSpacing) / ModMenuScreen.BUTTONS_PER_ROW;
         final int totalButtonsWidth = ModMenuScreen.BUTTONS_PER_ROW * buttonWidth + totalSpacing;
-        final int startX = x + (ModMenuScreen.MENU_WIDTH - totalButtonsWidth) / 2;
+        final int startX = x + (width - totalButtonsWidth) / 2;
         int buttonX = startX;
         int buttonY = y + ModMenuScreen.BUTTON_TOP_MARGIN;
 

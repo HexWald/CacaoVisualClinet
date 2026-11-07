@@ -32,7 +32,7 @@ public class ProfilesTabWindow extends Window {
         addWidget(new ProfilesPanelWidget(
                 x,
                 y + ModMenuScreen.BUTTON_TOP_MARGIN,
-                ModMenuScreen.MENU_WIDTH - 12
+                width - 12
         ));
         super.init();
     }

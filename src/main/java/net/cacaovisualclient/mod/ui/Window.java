@@ -2,6 +2,7 @@ package net.cacaovisualclient.mod.ui;
 
 import lombok.Getter;
 import net.cacaovisualclient.mod.ui.modmenu.ModMenuScreen;
+import net.cacaovisualclient.mod.utils.MouseUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -9,7 +10,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 
 import java.awt.*;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
 
 
 @Getter
@@ -20,19 +21,21 @@ public class Window {
     protected final int x;
     protected int y;
 
-    protected int width = ModMenuScreen.MENU_WIDTH;
-    protected int height = ModMenuScreen.MENU_HEIGHT - ModMenuScreen.MENU_TITLE_BAR_HEIGHT;
+    protected int width;
+    protected int height;
 
     protected int scrollOffset = 0;
     protected int maxScroll = 0;
 
-    protected final List<Widget> widgets = new CopyOnWriteArrayList<>();
+    protected final List<Widget> widgets = new ArrayList<>();
 
     public Window(ModMenuScreen parent, String name, int x, int y) {
         this.parent = parent;
         this.name = name;
         this.x = x;
         this.y = y;
+        width = parent.getMenuWidth();
+        height = parent.getMenuHeight() - ModMenuScreen.MENU_TITLE_BAR_HEIGHT;
     }
 
     public void init() {
@@ -49,6 +52,10 @@ public class Window {
         final int contentY = getContentTop();
         final int contentHeight = getContentBottom() - contentY;
 
+        if (mouseY < contentY || mouseY >= getContentBottom()) {
+            mouseX = -1;
+            mouseY = -1;
+        }
         guiGraphics.enableScissor(x, contentY, x + width, getContentBottom());
         for (Widget widget : widgets) {
             widget.render(guiGraphics, mouseX, mouseY, scrollOffset);
@@ -73,9 +80,14 @@ public class Window {
             widget.parentMouseClicked(event);
         }
 
+        if (event.y() < getContentTop() || event.y() >= getContentBottom()) {
+            return;
+        }
         for (Widget widget : widgets) {
-            if (widget.hovered) {
+            if (MouseUtils.isMouseOver((int) event.x(), (int) event.y(),
+                    widget.x, widget.y - scrollOffset, widget.width, widget.height)) {
                 widget.mouseClicked(event);
+                return;
             }
         }
     }

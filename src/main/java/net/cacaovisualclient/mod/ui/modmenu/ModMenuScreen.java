@@ -3,7 +3,6 @@ package net.cacaovisualclient.mod.ui.modmenu;
 import net.cacaovisualclient.mod.CacaoVisualClient;
 import net.cacaovisualclient.mod.ui.Window;
 import net.cacaovisualclient.mod.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
@@ -17,10 +16,8 @@ import java.awt.*;
 
 public class ModMenuScreen extends Screen {
 
-    private final Minecraft mc = Minecraft.getInstance();
-
-    public static final int MENU_WIDTH = 400;
-    public static int MENU_HEIGHT = 200;
+    private static final int MAX_WIDTH = 440;
+    private static final int MAX_HEIGHT = 260;
     public static final int MENU_TITLE_BAR_HEIGHT = 30;
 
     public static final int BUTTONS_PER_ROW = 4;
@@ -33,6 +30,8 @@ public class ModMenuScreen extends Screen {
 
     private int startX;
     private int startY;
+    private int menuWidth;
+    private int menuHeight;
 
     private Window currentWindow;
 
@@ -44,8 +43,10 @@ public class ModMenuScreen extends Screen {
     protected void init() {
         clearWidgets();
 
-        startX = (mc.screen.width - MENU_WIDTH) / 2;
-        startY = (mc.screen.height - MENU_HEIGHT) / 2;
+        menuWidth = Math.min(MAX_WIDTH, width - 16);
+        menuHeight = Math.min(MAX_HEIGHT, height - 16);
+        startX = (width - menuWidth) / 2;
+        startY = (height - menuHeight) / 2;
 
         switchToModulesTab();
 
@@ -60,7 +61,7 @@ public class ModMenuScreen extends Screen {
                 + font.width(profilesText)
                 + font.width(aboutText)
                 + 3 * textSpacing;
-        final int startButtonX = startX + MENU_WIDTH - totalWidth - 14;
+        final int startButtonX = startX + menuWidth - totalWidth - 14;
         final int buttonY = startY + 12;
         final int themesX = startButtonX + font.width(modsText) + textSpacing;
         final int profilesX = themesX + font.width(themesText) + textSpacing;
@@ -101,13 +102,13 @@ public class ModMenuScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float f) {
-        guiGraphics.fill(startX, startY, startX + MENU_WIDTH, startY + MENU_HEIGHT, new Color(0, 0, 0, 160).getRGB());
+        guiGraphics.fill(startX, startY, startX + menuWidth, startY + menuHeight, 0xE0151515);
 
         guiGraphics.renderItem(new ItemStack(CacaoVisualClient.getInstance().getSelectedTheme().getDisplayItem()), startX + 10, startY + 8);
 
         guiGraphics.drawString(
                 font,
-                "CacaoVisualClient",
+                "Cacao",
                 startX + 34,
                 startY + 13,
                 -1,
@@ -117,7 +118,7 @@ public class ModMenuScreen extends Screen {
         guiGraphics.fill(
                 startX + 6,
                 startY + MENU_TITLE_BAR_HEIGHT - 1,
-                startX + MENU_WIDTH - 6,
+                startX + menuWidth - 6,
                 startY + MENU_TITLE_BAR_HEIGHT,
                 new Color(255, 255, 255, 20).getRGB()
         );
@@ -140,7 +141,11 @@ public class ModMenuScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double x, double y, double scrollX, double scrollY) {
-        currentWindow.mouseScrolled(scrollY);
+        if (x >= currentWindow.getX() && x < currentWindow.getX() + currentWindow.getWidth()
+                && y >= currentWindow.getY() && y < currentWindow.getY() + currentWindow.getHeight()) {
+            currentWindow.mouseScrolled(scrollY);
+            return true;
+        }
         return super.mouseScrolled(x, y, scrollX, scrollY);
     }
 
@@ -169,6 +174,19 @@ public class ModMenuScreen extends Screen {
     public void switchWindow(Window window) {
         currentWindow = window;
         window.init();
+    }
+
+    public int getMenuWidth() {
+        return menuWidth;
+    }
+
+    public int getMenuHeight() {
+        return menuHeight;
+    }
+
+    @Override
+    public void removed() {
+        CacaoVisualClient.getInstance().save();
     }
 
     @Override
