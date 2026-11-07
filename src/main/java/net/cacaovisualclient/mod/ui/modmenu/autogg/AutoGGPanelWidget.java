@@ -142,9 +142,12 @@ public class AutoGGPanelWidget extends Widget {
         }
 
         if (isReloadButton(mouseX, mouseY)) {
-            storage.reload();
-            syncBasicFields();
-            setStatus("Reloaded AutoGG JSON");
+            if (storage.reload()) {
+                syncBasicFields();
+                setStatus("Reloaded AutoGG settings");
+            } else {
+                setStatus("Could not read autogg-patterns.json");
+            }
             return;
         }
 
@@ -297,8 +300,9 @@ public class AutoGGPanelWidget extends Widget {
             final int rowY = rowStartY + i * ROW_HEIGHT;
 
             if (MouseUtils.isMouseOver(mouseX, mouseY, rowToggleX(), rowY + 7, 38, BUTTON_HEIGHT)) {
-                storage.setPatternEnabled(pattern.getName(), !pattern.isEnabled());
-                setStatus(pattern.getName() + (pattern.isEnabled() ? " enabled" : " disabled"));
+                boolean enable = !pattern.isEnabled();
+                setStatus(storage.setPatternEnabled(pattern.getName(), enable)
+                        ? pattern.getName() + (enable ? " enabled" : " disabled") : "Could not save pattern");
                 return;
             }
 
@@ -308,16 +312,18 @@ public class AutoGGPanelWidget extends Widget {
             }
 
             if (MouseUtils.isMouseOver(mouseX, mouseY, rowDeleteX(), rowY + 7, 48, BUTTON_HEIGHT)) {
-                storage.removePattern(pattern.getName());
-                setStatus("Deleted " + pattern.getName());
+                setStatus(storage.removePattern(pattern.getName())
+                        ? "Deleted " + pattern.getName() : "Could not delete pattern");
                 return;
             }
         }
     }
 
     private void saveBasicSettings() {
-        storage.setMessage(messageBox.getValue().trim());
-        storage.setDelayMs(parseDelay());
+        if (!storage.saveSettings(messageBox.getValue().trim(), parseDelay())) {
+            setStatus("Could not save AutoGG settings");
+            return;
+        }
         syncBasicFields();
         setStatus("AutoGG settings saved");
     }
@@ -339,7 +345,7 @@ public class AutoGGPanelWidget extends Widget {
 
         final AutoGGPattern pattern = new AutoGGPattern(name, server, trigger, selectedMode);
         if (!storage.savePattern(pattern)) {
-            setStatus("Pattern is invalid");
+            setStatus("Could not save pattern");
             return;
         }
 
