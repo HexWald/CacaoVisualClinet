@@ -7,6 +7,7 @@ import net.cacaovisualclient.mod.module.ModuleManager;
 import net.cacaovisualclient.mod.utils.RenderUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
@@ -16,6 +17,7 @@ import java.awt.*;
 public class EditHudScreen extends Screen {
 
     private HudModule selectedModule;
+    private boolean dragging;
     private int offsetX;
     private int offsetY;
     private Integer snapGuideX;
@@ -33,7 +35,7 @@ public class EditHudScreen extends Screen {
 
         guiGraphics.drawString(
                 font,
-                "Drag HUD elements. Scroll over one to scale. Right click resets position.",
+                "Drag to move. Scroll to resize. Arrows to nudge. Right click to reset.",
                 8,
                 8,
                 new Color(255, 255, 255, 190).getRGB(),
@@ -61,10 +63,9 @@ public class EditHudScreen extends Screen {
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean bl) {
         if (event.button() == 0) {
-            final HudModule module = getModuleUnderMouse((int) event.x(), (int) event.y());
-
-            if (module != null) {
-                selectedModule = module;
+            selectedModule = getModuleUnderMouse((int) event.x(), (int) event.y());
+            dragging = selectedModule != null;
+            if (dragging) {
                 offsetX = (int) event.x() - selectedModule.getX();
                 offsetY = (int) event.y() - selectedModule.getY();
                 return true;
@@ -74,7 +75,9 @@ public class EditHudScreen extends Screen {
         if (event.button() == 1) {
             final HudModule module = getModuleUnderMouse((int) event.x(), (int) event.y());
             if (module != null) {
-                module.move(20, 20);
+                selectedModule = module;
+                module.resetPosition();
+                module.keepOnScreen(width, height);
                 return true;
             }
         }
@@ -84,8 +87,8 @@ public class EditHudScreen extends Screen {
 
     @Override
     public boolean mouseReleased(MouseButtonEvent event) {
-        if (event.button() == 0 && selectedModule != null) {
-            selectedModule = null;
+        if (event.button() == 0 && dragging) {
+            dragging = false;
             snapGuideX = null;
             snapGuideY = null;
             return true;
@@ -95,7 +98,7 @@ public class EditHudScreen extends Screen {
 
     @Override
     public boolean mouseDragged(MouseButtonEvent event, double d, double e) {
-        if (event.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT && selectedModule != null) {
+        if (event.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT && dragging) {
 
             int newX = (int) event.x() - offsetX;
             int newY = (int) event.y() - offsetY;
@@ -133,6 +136,9 @@ public class EditHudScreen extends Screen {
             }
 
             selectedModule.move(newX, newY);
+            selectedModule.keepOnScreen(width, height);
+            if (newX != selectedModule.getX()) snapGuideX = null;
+            if (newY != selectedModule.getY()) snapGuideY = null;
             return true;
         }
         return super.mouseDragged(event, d, e);
@@ -140,13 +146,36 @@ public class EditHudScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        final HudModule module = selectedModule != null ? selectedModule : getModuleUnderMouse((int) mouseX, (int) mouseY);
+        final HudModule module = dragging ? selectedModule : getModuleUnderMouse((int) mouseX, (int) mouseY);
         if (module == null) {
             return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
         }
 
         final double value = module.getScale().getValue() + scrollY * 5.0;
-        module.getScale().setValue(Math.max(50.0, Math.min(200.0, value)));
+        module.getScale().setValue(value);
+        selectedModule = module;
+        return true;
+    }
+
+    @Override
+    public boolean keyPressed(KeyEvent event) {
+        if (selectedModule == null || dragging) {
+            return super.keyPressed(event);
+        }
+        int step = event.hasShiftDown() ? 5 : 1;
+        int x = selectedModule.getX();
+        int y = selectedModule.getY();
+        switch (event.key()) {
+            case GLFW.GLFW_KEY_LEFT -> x -= step;
+            case GLFW.GLFW_KEY_RIGHT -> x += step;
+            case GLFW.GLFW_KEY_UP -> y -= step;
+            case GLFW.GLFW_KEY_DOWN -> y += step;
+            default -> {
+                return super.keyPressed(event);
+            }
+        }
+        selectedModule.move(x, y);
+        selectedModule.keepOnScreen(width, height);
         return true;
     }
 
@@ -207,7 +236,7 @@ public class EditHudScreen extends Screen {
     }
 
     private HudModule getModuleUnderMouse(int mouseX, int mouseY) {
-        return CacaoVisualClient.getInstance().getModuleManager().getHudModules().stream()
+        return CacaoVisualClient.getInstance().getModuleManager().getHudModules().reversed().stream()
                 .filter(Module::isEnabled)
                 .filter(module -> module.isHovered(mouseX, mouseY))
                 .findFirst()
