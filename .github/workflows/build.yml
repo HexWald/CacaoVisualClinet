@@ -1,10 +1,8 @@
-# Automatically build the project and run any configured tests for every push
-# and submitted pull request. This can help catch issues that only occur on
-# certain platforms or Java versions, and provides a first line of defence
-# against bad commits.
-
-name: build
+name: Build
 on: [pull_request, push]
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -23,8 +21,10 @@ jobs:
         run: chmod +x ./gradlew
       - name: build
         run: ./gradlew build
-      - name: capture build artifacts
+      - name: Upload mod JAR
         uses: actions/upload-artifact@v4
         with:
-          name: Artifacts
-          path: build/libs/
+          name: CacaoVisualClient
+          path: |
+            build/libs/*.jar
+            !build/libs/*-sources.jar

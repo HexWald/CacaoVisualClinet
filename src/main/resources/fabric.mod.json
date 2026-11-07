@@ -3,7 +3,7 @@
 	"id": "cacaovisualclient",
 	"version": "${version}",
 	"name": "CacaoVisualClient",
-	"description": "1.21.11 Minecraft PvP Client",
+	"description": "Configurable HUD, zoom and crosshair for Minecraft 1.21.11",
 	"authors": [
 		"HexWald",
 		"jirmjahu / jahuuh"
