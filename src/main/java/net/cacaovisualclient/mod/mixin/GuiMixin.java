@@ -7,8 +7,10 @@ import net.cacaovisualclient.mod.module.modules.CustomCrosshairModule;
 import net.cacaovisualclient.mod.module.modules.HitmarkerModule;
 import net.cacaovisualclient.mod.module.modules.LowHpEffectModule;
 import net.cacaovisualclient.mod.module.modules.ScoreboardModule;
+import net.cacaovisualclient.mod.ui.editor.EditHudScreen;
 import net.cacaovisualclient.mod.utils.Notification;
 import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
@@ -29,6 +31,10 @@ public abstract class GuiMixin {
 
     @Inject(method = "render", at = @At("RETURN"))
     private void onRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo info) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.options.hideGui || client.screen instanceof EditHudScreen) {
+            return;
+        }
         final LowHpEffectModule lowHpEffectModule = CacaoVisualClient.getInstance()
                 .getModuleManager()
                 .getModule(LowHpEffectModule.class);

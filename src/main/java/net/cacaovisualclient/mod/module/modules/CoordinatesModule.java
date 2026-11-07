@@ -16,11 +16,8 @@ public class CoordinatesModule extends HudModule {
             return null;
         }
 
-        final long x = Math.round(mc.player.getX());
-        final long y = Math.round(mc.player.getY());
-        final long z = Math.round(mc.player.getZ());
-
-        return "X: " + x + " Y: " + y + " Z: " + z;
+        var pos = mc.player.blockPosition();
+        return pos.getX() + " / " + pos.getY() + " / " + pos.getZ();
     }
 }
 

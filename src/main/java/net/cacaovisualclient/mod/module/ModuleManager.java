@@ -7,6 +7,7 @@ import java.util.*;
 public class ModuleManager {
 
     private final Map<Class<? extends Module>, Module> modules = new LinkedHashMap<>();
+    private final List<HudModule> hudModules;
 
     public ModuleManager() {
         register(new ArmorHudModule());
@@ -31,6 +32,10 @@ public class ModuleManager {
         register(new ViewmodelEditorModule());
         register(new ViewTweaksModule());
         register(new ZoomModule());
+        hudModules = modules.values().stream()
+                .filter(HudModule.class::isInstance)
+                .map(HudModule.class::cast)
+                .toList();
     }
 
     private void register(Module module) {
@@ -53,10 +58,7 @@ public class ModuleManager {
     }
 
     public List<HudModule> getHudModules() {
-        return modules.values().stream()
-                .filter(module -> module instanceof HudModule)
-                .map(module -> (HudModule) module)
-                .toList();
+        return hudModules;
     }
 
 }
