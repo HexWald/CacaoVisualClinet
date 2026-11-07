@@ -63,6 +63,9 @@ public class ProfileManager {
         if (!ProfileNames.isValid(cleanName) || getProfile(cleanName) != null || storage.exists(cleanName)) {
             return false;
         }
+        if (currentProfile != null && !saveCurrentProfile()) {
+            return false;
+        }
 
         final Profile profile = new Profile(cleanName);
         if (!storage.save(profile)) {
@@ -140,7 +143,14 @@ public class ProfileManager {
     }
 
     public boolean load(String name) {
-        final Profile profile = storage.load(name);
+        final Profile target = getProfile(name);
+        if (target == null) {
+            return false;
+        }
+        if (currentProfile != null && !currentProfile.getName().equals(target.getName()) && !saveCurrentProfile()) {
+            return false;
+        }
+        final Profile profile = storage.load(target.getName());
         if (profile == null) {
             return false;
         }

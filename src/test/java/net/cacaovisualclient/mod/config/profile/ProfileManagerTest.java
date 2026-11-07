@@ -1,6 +1,8 @@
 package net.cacaovisualclient.mod.config.profile;
 
 import net.cacaovisualclient.mod.config.Config;
+import net.cacaovisualclient.mod.module.Module;
+import net.cacaovisualclient.mod.module.ModuleInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -39,5 +41,23 @@ class ProfileManagerTest {
         assertTrue(manager.load("Duels"));
         assertEquals("Duels", config.getCurrentProfile());
         assertFalse(Files.exists(directory.resolve("Old name.json")));
+    }
+
+    @Test
+    void switchingProfilesSavesChangesToThePreviousProfile() {
+        TestModule module = new TestModule();
+        ProfileManager manager = new ProfileManager(new Config(),
+                new ProfileStorage(directory.toFile(), List.of(module)));
+        assertTrue(manager.createProfile("Arena"));
+        module.setEnabled(true);
+
+        assertTrue(manager.load("Default"));
+        assertFalse(module.isEnabled());
+        assertTrue(manager.load("Arena"));
+        assertTrue(module.isEnabled());
+    }
+
+    @ModuleInfo(name = "Test", description = "")
+    private static class TestModule extends Module {
     }
 }

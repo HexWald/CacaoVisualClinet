@@ -74,6 +74,8 @@ public class ProfileTypeAdapter implements JsonSerializer<Profile>, JsonDeserial
         for (Module module : modules) {
             final JsonObject moduleObject = modulesObject.getAsJsonObject(module.getName());
             if (moduleObject == null) {
+                changes.add(module::reset);
+                toggles.add(() -> module.setEnabled(false));
                 continue;
             }
 
@@ -85,19 +87,23 @@ public class ProfileTypeAdapter implements JsonSerializer<Profile>, JsonDeserial
             toggles.add(() -> module.setEnabled(enabled));
 
             final JsonObject settingsObject = moduleObject.getAsJsonObject("settings");
-            if (settingsObject != null) {
-                for (Setting<?> setting : module.getSettings()) {
-                    if (settingsObject.has(setting.getName())) {
-                        changes.add(readSetting(setting, settingsObject.get(setting.getName())));
-                    }
+            for (Setting<?> setting : module.getSettings()) {
+                if (settingsObject != null && settingsObject.has(setting.getName())) {
+                    changes.add(readSetting(setting, settingsObject.get(setting.getName())));
+                } else {
+                    changes.add(setting::reset);
                 }
             }
 
-            if (module instanceof HudModule hud && moduleObject.has("hud")) {
-                final JsonObject hudObject = moduleObject.getAsJsonObject("hud");
-                int x = hudObject.get("x").getAsInt();
-                int y = hudObject.get("y").getAsInt();
-                changes.add(() -> hud.move(x, y));
+            if (module instanceof HudModule hud) {
+                if (moduleObject.has("hud")) {
+                    final JsonObject hudObject = moduleObject.getAsJsonObject("hud");
+                    int x = hudObject.get("x").getAsInt();
+                    int y = hudObject.get("y").getAsInt();
+                    changes.add(() -> hud.move(x, y));
+                } else {
+                    changes.add(hud::resetPosition);
+                }
             }
 
         }

@@ -43,6 +43,23 @@ class ProfileTypeAdapterTest {
         assertEquals(5.0, first.sizeOnEnable);
     }
 
+    @Test
+    void olderProfileUsesDefaultsForMissingEntries() {
+        First first = new First();
+        Second second = new Second();
+        first.size.setValue(8.0);
+        second.setEnabled(true);
+        ProfileTypeAdapter adapter = new ProfileTypeAdapter(List.of(first, second));
+
+        adapter.deserialize(JsonParser.parseString("""
+                {"version":1,"name":"Old","modules":{"First":{"enabled":true}}}
+                """), Profile.class, null);
+
+        assertTrue(first.isEnabled());
+        assertEquals(2.0, first.sizeOnEnable);
+        assertFalse(second.isEnabled());
+    }
+
     @ModuleInfo(name = "First", description = "")
     private static class First extends Module {
         private final NumberSetting size = new NumberSetting("Size", 2.0, 1.0, 10.0, 1.0);
