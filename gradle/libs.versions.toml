@@ -2,7 +2,7 @@
 
 minecraft = "1.21.11"
 loader = "0.18.2"
-loom = "1.14-SNAPSHOT"
+loom = "1.14.10"
 fabric = "0.139.4+1.21.11"
 
 lombok = "1.18.42"
