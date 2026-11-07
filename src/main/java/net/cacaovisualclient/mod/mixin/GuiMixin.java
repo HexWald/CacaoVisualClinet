@@ -4,6 +4,7 @@ import net.cacaovisualclient.mod.CacaoVisualClient;
 import net.cacaovisualclient.mod.event.TitleTextEvent;
 import net.cacaovisualclient.mod.module.HudModule;
 import net.cacaovisualclient.mod.module.modules.CustomCrosshairModule;
+import net.cacaovisualclient.mod.module.modules.EffectTimersModule;
 import net.cacaovisualclient.mod.module.modules.HitmarkerModule;
 import net.cacaovisualclient.mod.module.modules.LowHpEffectModule;
 import net.cacaovisualclient.mod.module.modules.ScoreboardModule;
@@ -28,6 +29,14 @@ public abstract class GuiMixin {
 
     @Shadow
     public abstract Font getFont();
+
+    @Inject(method = "renderEffects", at = @At("HEAD"), cancellable = true)
+    private void replaceEffectIcons(GuiGraphics graphics, DeltaTracker tracker, CallbackInfo info) {
+        EffectTimersModule timers = CacaoVisualClient.getModule(EffectTimersModule.class);
+        if (timers != null && timers.replacesIcons()) {
+            info.cancel();
+        }
+    }
 
     @Inject(method = "render", at = @At("RETURN"))
     private void onRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo info) {

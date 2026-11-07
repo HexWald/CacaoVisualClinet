@@ -16,6 +16,7 @@ public class ModuleManager {
         register(new ClockModule());
         register(new CoordinatesModule());
         register(new CPSModule());
+        register(new EffectTimersModule());
         register(new CustomCrosshairModule());
         register(new BedWarsAlertsModule());
         register(new ScoreboardModule());
