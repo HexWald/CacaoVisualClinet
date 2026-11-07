@@ -12,11 +12,11 @@ Open the Mods screen with **Right Shift**. Search for a module, click its row to
 
 | Key | Action |
 | --- | --- |
-| P | Edit the HUD |
+| K | Edit the HUD |
 | C | Hold to zoom, scroll to change magnification |
 | V | Inspect the held sword |
 
-Enable Zoom or Sword Inspect in Mods to use its key. Bindings are in Minecraft's Controls screen.
+Enable Zoom or Sword Inspect in Mods to use its key. Bindings are in Minecraft's Controls screen. If the HUD editor still uses P after updating, reset its binding to switch to K.
 
 In the HUD editor, drag an element to move it or scroll over it to resize it. Select it to move by one pixel with the arrow keys, or five with Shift. Right click restores its position.
 

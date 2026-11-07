@@ -59,7 +59,7 @@ public class CacaoVisualClient implements ClientModInitializer {
     public static final KeyMapping HUD_EDITOR_KEY_MAPPING = KeyBindingHelper.registerKeyBinding(
             new KeyMapping(
                     "key.cacaovisualclient.hud_editor",
-                    GLFW.GLFW_KEY_P,
+                    GLFW.GLFW_KEY_K,
                     KEY_CATEGORY
             )
     );
