@@ -4,6 +4,7 @@ import net.cacaovisualclient.mod.CacaoVisualClient;
 import net.cacaovisualclient.mod.ui.Window;
 import net.cacaovisualclient.mod.utils.RenderUtils;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -34,6 +35,8 @@ public class ModMenuScreen extends Screen {
     private int menuHeight;
 
     private Window currentWindow;
+    private EditBox search;
+    private String moduleQuery = "";
 
     public ModMenuScreen() {
         super(Component.literal("Mod Menu"));
@@ -172,8 +175,24 @@ public class ModMenuScreen extends Screen {
     }
 
     public void switchWindow(Window window) {
+        if (search != null) {
+            removeWidget(search);
+            search = null;
+        }
         currentWindow = window;
         window.init();
+    }
+
+    void showSearch(EditBox field) {
+        search = addRenderableWidget(field);
+    }
+
+    String getModuleQuery() {
+        return moduleQuery;
+    }
+
+    void setModuleQuery(String query) {
+        moduleQuery = query;
     }
 
     public int getMenuWidth() {
