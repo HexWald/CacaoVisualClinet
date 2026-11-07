@@ -5,7 +5,6 @@ import net.cacaovisualclient.mod.module.HudModule;
 import net.cacaovisualclient.mod.module.Module;
 import net.cacaovisualclient.mod.module.ModuleManager;
 import net.cacaovisualclient.mod.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -16,17 +15,13 @@ import java.awt.*;
 
 public class EditHudScreen extends Screen {
 
-    public static EditHudScreen INSTANCE = new EditHudScreen();
-
-    private final Minecraft mc = Minecraft.getInstance();
-
     private HudModule selectedModule;
     private int offsetX;
     private int offsetY;
     private Integer snapGuideX;
     private Integer snapGuideY;
 
-    protected EditHudScreen() {
+    public EditHudScreen() {
         super(Component.literal("Edit Hud"));
     }
 
@@ -225,5 +220,10 @@ public class EditHudScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    @Override
+    public void removed() {
+        CacaoVisualClient.getInstance().save();
     }
 }

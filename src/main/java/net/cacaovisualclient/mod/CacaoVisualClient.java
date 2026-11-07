@@ -7,17 +7,16 @@ import net.cacaovisualclient.mod.config.ConfigManager;
 import net.cacaovisualclient.mod.config.ConfigStorage;
 import net.cacaovisualclient.mod.config.profile.ProfileManager;
 import net.cacaovisualclient.mod.config.profile.ProfileStorage;
-import net.cacaovisualclient.mod.event.KeyPressedEvent;
 import net.cacaovisualclient.mod.module.ModuleManager;
 import net.cacaovisualclient.mod.theme.Theme;
 import net.cacaovisualclient.mod.ui.editor.EditHudScreen;
 import net.cacaovisualclient.mod.ui.modmenu.ModMenuScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -109,27 +108,25 @@ public class CacaoVisualClient implements ClientModInitializer {
             LOGGER.info("Successfully initialized {}", MOD_NAME);
         });
 
-        KeyPressedEvent.KEY_PRESSED_EVENT.register(key -> {
-            if (Minecraft.getInstance().screen != null) {
-                return;
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (MODMENU_KEY_MAPPING.consumeClick()) {
+                if (moduleManager != null && client.screen == null && client.isWindowActive()) {
+                    client.setScreen(new ModMenuScreen());
+                }
             }
-
-            if (key == KeyBindingHelper.getBoundKeyOf(MODMENU_KEY_MAPPING).getValue()) {
-                Minecraft.getInstance().setScreen(new ModMenuScreen());
-            }
-
-            if (key == KeyBindingHelper.getBoundKeyOf(HUD_EDITOR_KEY_MAPPING).getValue()) {
-                Minecraft.getInstance().setScreen(EditHudScreen.INSTANCE);
+            while (HUD_EDITOR_KEY_MAPPING.consumeClick()) {
+                if (moduleManager != null && client.player != null && client.screen == null
+                        && client.isWindowActive()) {
+                    client.setScreen(new EditHudScreen());
+                }
             }
         });
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            LOGGER.info("Shutting down...");
-
+        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> {
             if (profileManager != null && configManager != null) {
                 save();
             }
-        }));
+        });
     }
 
     public void save() {
