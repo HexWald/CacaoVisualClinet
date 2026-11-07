@@ -3,12 +3,12 @@ package net.cacaovisualclient.mod.module.modules;
 import net.cacaovisualclient.mod.feature.bedwars.BedWarsMessageParser;
 import net.cacaovisualclient.mod.feature.bedwars.BedWarsNotice;
 import net.cacaovisualclient.mod.feature.bedwars.BedWarsNoticeType;
-import net.cacaovisualclient.mod.event.AddChatMessageEvent;
 import net.cacaovisualclient.mod.event.TitleTextEvent;
 import net.cacaovisualclient.mod.module.Module;
 import net.cacaovisualclient.mod.module.ModuleInfo;
 import net.cacaovisualclient.mod.module.settings.BooleanSetting;
 import net.cacaovisualclient.mod.utils.Notification;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 
 import java.util.Optional;
 
@@ -31,9 +31,9 @@ public class BedWarsAlertsModule extends Module {
 
     public BedWarsAlertsModule() {
         addSettings(bedDestroyed, finalKills, matchResults);
-        setEnabled(true);
-
-        AddChatMessageEvent.ADD_CHAT_MESSAGE_EVENT.register(this::handleMessage);
+        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+            if (!overlay) handleMessage(message.getString());
+        });
         TitleTextEvent.TITLE_TEXT_EVENT.register(this::handleMessage);
     }
 

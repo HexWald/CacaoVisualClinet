@@ -2,7 +2,6 @@ package net.cacaovisualclient.mod.module.modules;
 
 import lombok.RequiredArgsConstructor;
 import net.cacaovisualclient.mod.feature.autogg.AutoGGPatternStorage;
-import net.cacaovisualclient.mod.event.AddChatMessageEvent;
 import net.cacaovisualclient.mod.module.Module;
 import net.cacaovisualclient.mod.module.ModuleInfo;
 import net.cacaovisualclient.mod.module.settings.BooleanSetting;
@@ -11,6 +10,10 @@ import net.cacaovisualclient.mod.utils.MessageUtils;
 import net.cacaovisualclient.mod.utils.ServerUtils;
 import net.cacaovisualclient.mod.utils.TimeDelay;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.resolver.ServerAddress;
 
 import java.util.List;
 import java.util.Locale;
@@ -48,35 +51,48 @@ public class AutoGGModule extends Module {
     );
 
     private final TimeDelay delay = new TimeDelay();
-    private boolean shouldSend = false;
+    private ClientPacketListener pending;
     private long lastSentAt = 0L;
 
     public AutoGGModule() {
         addSettings(gomme, hypixel, cytooxien, customPatterns, caseSensitive);
 
-        AddChatMessageEvent.ADD_CHAT_MESSAGE_EVENT.register(message -> {
-            if (!isEnabled() || ServerUtils.getCurrentServerIp() == null) {
+        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+            if (overlay || !isEnabled() || pending != null || mc.getConnection() == null) {
                 return;
             }
 
-            if (shouldSendGG(message)) {
-                shouldSend = true;
+            if (shouldSendGG(message.getString())) {
+                pending = mc.getConnection();
                 delay.reset();
             }
         });
 
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            pending = null;
+            lastSentAt = 0L;
+        });
+
         ClientTickEvents.START_CLIENT_TICK.register(mc -> {
-            if (!isEnabled()) {
-                shouldSend = false;
+            if (pending == null) {
+                return;
+            }
+            if (pending != mc.getConnection() || mc.player == null) {
+                pending = null;
                 return;
             }
 
-            if (shouldSend && delay.hasPassed(customStorage.getConfig().getDelayMs())) {
+            if (delay.hasPassed(customStorage.getConfig().getDelayMs())) {
                 ChatUtils.sendAsPlayer(customStorage.getConfig().getMessage());
                 lastSentAt = System.currentTimeMillis();
-                shouldSend = false;
+                pending = null;
             }
         });
+    }
+
+    @Override
+    public void onDisable() {
+        pending = null;
     }
 
     public AutoGGPatternStorage getCustomStorage() {
@@ -118,8 +134,9 @@ public class AutoGGModule extends Module {
         }
 
         public boolean matchesServer(String currentIp) {
-            final String normalizedIp = currentIp.toLowerCase(Locale.ROOT);
-            return ips.stream().anyMatch(ip -> normalizedIp.contains(ip.toLowerCase(Locale.ROOT)));
+            String host = ServerAddress.parseString(currentIp).getHost().toLowerCase(Locale.ROOT);
+            String normalized = host.endsWith(".") ? host.substring(0, host.length() - 1) : host;
+            return ips.stream().anyMatch(ip -> normalized.equals(ip) || normalized.endsWith("." + ip));
         }
 
         public boolean matchesMessage(String message) {

@@ -27,7 +27,6 @@ public class SwordInspectModule extends Module {
 
     public SwordInspectModule() {
         addSettings(style, duration, queuePresses);
-        setEnabled(true);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (!isEnabled()) {

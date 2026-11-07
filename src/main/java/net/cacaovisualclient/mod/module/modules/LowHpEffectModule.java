@@ -32,7 +32,6 @@ public class LowHpEffectModule extends Module {
 
     public LowHpEffectModule() {
         addSettings(healthThreshold, vignetteIntensity, vignette, heartbeat, warningToast);
-        setEnabled(true);
 
         ClientTickEvents.END_CLIENT_TICK.register(this::tick);
     }
