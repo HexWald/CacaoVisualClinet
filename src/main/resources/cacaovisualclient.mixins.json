@@ -14,7 +14,7 @@
     "LivingEntityRendererMixin",
     "MouseHandlerMixin",
     "ClientPacketListenerMixin",
-    "UnitDoubleMixin",
+    "LightTextureMixin",
     "ItemInHandRendererMixin",
     "ScreenEffectRendererMixin",
     "ScreenMixin",
