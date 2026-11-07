@@ -8,6 +8,7 @@ import net.cacaovisualclient.mod.config.ConfigStorage;
 import net.cacaovisualclient.mod.config.profile.ProfileManager;
 import net.cacaovisualclient.mod.config.profile.ProfileStorage;
 import net.cacaovisualclient.mod.module.ModuleManager;
+import net.cacaovisualclient.mod.module.Module;
 import net.cacaovisualclient.mod.theme.Theme;
 import net.cacaovisualclient.mod.ui.editor.EditHudScreen;
 import net.cacaovisualclient.mod.ui.modmenu.ModMenuScreen;
@@ -136,6 +137,10 @@ public class CacaoVisualClient implements ClientModInitializer {
 
     public Config getConfig() {
         return configManager.getConfig();
+    }
+
+    public static <T extends Module> T getModule(Class<T> type) {
+        return instance == null || instance.moduleManager == null ? null : instance.moduleManager.getModule(type);
     }
 
     public void setSelectedTheme(Theme selectedTheme) {
