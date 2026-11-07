@@ -4,7 +4,7 @@ Fabric mod for Minecraft 1.21.11 with a movable HUD, zoom, crosshair settings an
 
 ## Install
 
-Use Java 21, Fabric Loader 0.18.2 or newer and Fabric API for 1.21.11. Download the JAR from a successful build and put it in `mods`. [Builds](https://github.com/HexWald/CacaoVisualClinet/actions/workflows/build.yml)
+Use Java 21, Fabric Loader 0.18.2 or newer and Fabric API 0.139.4 or newer for Minecraft 1.21.11. Download the mod JAR and put it in `mods`. [Releases](https://github.com/HexWald/CacaoVisualClinet/releases)
 
 ## In game
 

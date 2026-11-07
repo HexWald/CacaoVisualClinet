@@ -28,3 +28,23 @@ jobs:
           path: |
             build/libs/*.jar
             !build/libs/*-sources.jar
+
+  release:
+    if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: CacaoVisualClient
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          jar="CacaoVisualClient-$version.jar"
+          test -f "$jar"
+          gh release create "$GITHUB_REF_NAME" "$jar" --repo "$GITHUB_REPOSITORY" \
+            --verify-tag --notes-from-tag --title "CacaoVisualClient $version"
