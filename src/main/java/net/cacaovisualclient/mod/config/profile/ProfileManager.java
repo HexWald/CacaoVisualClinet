@@ -1,9 +1,7 @@
 package net.cacaovisualclient.mod.config.profile;
 
 import lombok.Getter;
-import net.cacaovisualclient.mod.CacaoVisualClient;
 import net.cacaovisualclient.mod.config.Config;
-import net.cacaovisualclient.mod.module.ModuleManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,41 +12,38 @@ public class ProfileManager {
 
     private final Config config;
     private final ProfileStorage storage;
-    private final ModuleManager moduleManager;
 
     @Getter
     private Profile currentProfile;
     private final List<Profile> profiles;
 
-    public ProfileManager(Config config, ProfileStorage storage, ModuleManager moduleManager) {
+    public ProfileManager(Config config, ProfileStorage storage) {
         this.config = config;
         this.storage = storage;
-        this.moduleManager = moduleManager;
 
         this.profiles = new ArrayList<>(storage.loadProfiles());
 
-        if (profiles.isEmpty() && !createProfile(DEFAULT_PROFILE_NAME)) {
-            CacaoVisualClient.LOGGER.warn("Could not save the default profile, keeping it in memory");
-            profiles.add(new Profile(DEFAULT_PROFILE_NAME, moduleManager.getEnabledModules()));
+        if (profiles.isEmpty()) {
+            createProfile(DEFAULT_PROFILE_NAME);
+            return;
         }
 
-        final Profile requestedProfile = getProfile(config.getCurrentProfile());
-        final Profile fallbackProfile = getProfile(DEFAULT_PROFILE_NAME);
-        final Profile profileToLoad = requestedProfile != null
-                ? requestedProfile
-                : fallbackProfile != null ? fallbackProfile : profiles.getFirst();
-
-        if (requestedProfile == null) {
-            CacaoVisualClient.LOGGER.warn(
-                    "Profile '{}' was not found, falling back to '{}'",
-                    config.getCurrentProfile(),
-                    profileToLoad.getName()
-            );
+        Profile requested = getProfile(config.getCurrentProfile());
+        if (requested != null && load(requested.getName())) {
+            return;
         }
+        loadFallback(requested);
+    }
 
-        if (!load(profileToLoad.getName())) {
-            CacaoVisualClient.LOGGER.warn("Failed to load profile '{}', using current module defaults", profileToLoad.getName());
-            setCurrentProfile(profileToLoad);
+    private void loadFallback(Profile failed) {
+        Profile fallback = getProfile(DEFAULT_PROFILE_NAME);
+        if (fallback != null && fallback != failed && load(fallback.getName())) {
+            return;
+        }
+        for (Profile profile : profiles) {
+            if (profile != failed && profile != fallback && load(profile.getName())) {
+                return;
+            }
         }
     }
 
@@ -65,11 +60,11 @@ public class ProfileManager {
 
     public boolean createProfile(String name) {
         final String cleanName = name == null ? "" : name.trim();
-        if (!ProfileNames.isValid(cleanName) || getProfile(cleanName) != null) {
+        if (!ProfileNames.isValid(cleanName) || getProfile(cleanName) != null || storage.exists(cleanName)) {
             return false;
         }
 
-        final Profile profile = new Profile(cleanName, moduleManager.getEnabledModules());
+        final Profile profile = new Profile(cleanName);
         if (!storage.save(profile)) {
             return false;
         }
@@ -88,7 +83,7 @@ public class ProfileManager {
             return false;
         }
 
-        profiles.add(new Profile(cleanTarget, List.of()));
+        profiles.add(new Profile(cleanTarget));
         return true;
     }
 
@@ -99,15 +94,15 @@ public class ProfileManager {
             return false;
         }
 
-        if (!storage.rename(sourceName, cleanTarget)) {
+        if (!storage.rename(source.getName(), cleanTarget)) {
             return false;
         }
 
         profiles.remove(source);
-        final Profile renamed = new Profile(cleanTarget, source.getEnabledModules());
+        final Profile renamed = new Profile(cleanTarget);
         profiles.add(renamed);
 
-        if (currentProfile != null && currentProfile.getName().equals(sourceName)) {
+        if (currentProfile != null && currentProfile.getName().equals(source.getName())) {
             currentProfile = renamed;
             config.setCurrentProfile(cleanTarget);
         }
@@ -121,38 +116,27 @@ public class ProfileManager {
             return false;
         }
 
-        if (!storage.delete(name)) {
+        if (!storage.delete(profile.getName())) {
             return false;
         }
 
         profiles.remove(profile);
 
-        if (currentProfile != null && currentProfile.getName().equals(name)) {
-            final Profile fallback = getProfile(DEFAULT_PROFILE_NAME) != null
-                    ? getProfile(DEFAULT_PROFILE_NAME)
-                    : profiles.getFirst();
-            load(fallback.getName());
+        if (currentProfile != null && currentProfile.getName().equals(profile.getName())) {
+            currentProfile = null;
+            loadFallback(null);
         }
 
         return true;
     }
 
-    public void saveProfile(Profile profile) {
-        storage.save(profile);
-    }
-
-    public void saveProfile(String name) {
+    public boolean saveProfile(String name) {
         final Profile profile = getProfile(name);
-        if (profile == null) {
-            return;
-        }
-        saveProfile(profile);
+        return profile != null && storage.save(profile);
     }
 
-    public void saveCurrentProfile() {
-        if (currentProfile != null) {
-            saveProfile(currentProfile);
-        }
+    public boolean saveCurrentProfile() {
+        return currentProfile != null && storage.save(currentProfile);
     }
 
     public boolean load(String name) {
@@ -165,18 +149,8 @@ public class ProfileManager {
         return true;
     }
 
-    public void setCurrentProfile(Profile profile) {
+    private void setCurrentProfile(Profile profile) {
         currentProfile = profile;
         config.setCurrentProfile(profile.getName());
-        saveCurrentProfile();
-    }
-
-    public void setCurrentProfile(String name) {
-        final Profile profile = getProfile(name);
-        if (profile == null) {
-            return;
-        }
-
-        setCurrentProfile(profile);
     }
 }

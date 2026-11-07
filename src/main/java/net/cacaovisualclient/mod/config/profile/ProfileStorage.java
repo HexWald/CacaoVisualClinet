@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.cacaovisualclient.mod.CacaoVisualClient;
+import net.cacaovisualclient.mod.module.Module;
 import net.cacaovisualclient.mod.module.ModuleManager;
 import net.cacaovisualclient.mod.utils.JsonUtils;
 
@@ -15,42 +16,46 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 public class ProfileStorage {
 
-    private static final File PROFILE_DIR = new File("cacaovisualclient/profiles");
-
+    private final File directory;
     private final Gson gson;
 
     public ProfileStorage(ModuleManager moduleManager) {
+        this(new File("cacaovisualclient/profiles"), moduleManager.getModules());
+    }
+
+    ProfileStorage(File directory, Collection<Module> modules) {
+        this.directory = directory;
         this.gson = new GsonBuilder()
-                .registerTypeAdapter(Profile.class, new ProfileTypeAdapter(moduleManager.getModules()))
+                .registerTypeAdapter(Profile.class, new ProfileTypeAdapter(modules))
                 .setPrettyPrinting()
                 .create();
 
-        PROFILE_DIR.mkdirs();
+        directory.mkdirs();
     }
 
     public List<Profile> loadProfiles() {
         final List<Profile> profileList = new ArrayList<>();
-        final File[] files = PROFILE_DIR.listFiles(file ->
-                file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".json")
+        final File[] files = directory.listFiles(file ->
+                file.isFile() && file.getName().endsWith(".json")
         );
 
         if (files == null) {
-            CacaoVisualClient.LOGGER.warn("Failed to list profiles in {}", PROFILE_DIR.getAbsolutePath());
+            CacaoVisualClient.LOGGER.warn("Failed to list profiles in {}", directory.getAbsolutePath());
             return profileList;
         }
 
         Arrays.sort(files, Comparator.comparing(File::getName, String.CASE_INSENSITIVE_ORDER));
 
         for (File file : files) {
-            final Profile profile = loadMetadata(file);
-            if (profile != null) {
-                profileList.add(profile);
+            String name = file.getName().substring(0, file.getName().length() - 5);
+            if (ProfileNames.isValid(name)) {
+                profileList.add(new Profile(name));
             }
         }
 
@@ -62,26 +67,40 @@ public class ProfileStorage {
             CacaoVisualClient.LOGGER.warn("Cannot save profile with an invalid file name: {}", profile.getName());
             return false;
         }
-        return JsonUtils.saveToJson(gson, new File(PROFILE_DIR, profile.getName() + ".json"), profile);
+        return JsonUtils.saveToJson(gson, file(profile.getName()), profile);
     }
 
     public Profile load(String name) {
         if (!ProfileNames.isValid(name)) {
             return null;
         }
-        return JsonUtils.loadFromJson(gson, new File(PROFILE_DIR, name + ".json"), Profile.class);
+        JsonObject root = JsonUtils.loadFromJson(file(name), JsonObject.class);
+        if (root == null) {
+            return null;
+        }
+        root.addProperty("name", name);
+        try {
+            return gson.fromJson(root, Profile.class);
+        } catch (RuntimeException e) {
+            CacaoVisualClient.LOGGER.error("Failed to load profile {}", name, e);
+            return null;
+        }
     }
 
     public boolean delete(String name) {
-        return ProfileNames.isValid(name) && new File(PROFILE_DIR, name + ".json").delete();
+        return ProfileNames.isValid(name) && file(name).delete();
+    }
+
+    boolean exists(String name) {
+        return file(name).exists();
     }
 
     public boolean copy(String sourceName, String targetName) {
         if (!ProfileNames.isValid(sourceName) || !ProfileNames.isValid(targetName)) {
             return false;
         }
-        final File source = new File(PROFILE_DIR, sourceName + ".json");
-        final File target = new File(PROFILE_DIR, targetName + ".json");
+        final File source = file(sourceName);
+        final File target = file(targetName);
 
         if (!source.isFile() || target.exists()) {
             return false;
@@ -98,31 +117,19 @@ public class ProfileStorage {
     }
 
     public boolean rename(String sourceName, String targetName) {
-        if (!copy(sourceName, targetName)) {
+        if (!ProfileNames.isValid(sourceName) || !ProfileNames.isValid(targetName)) {
             return false;
         }
-
-        if (!delete(sourceName)) {
-            CacaoVisualClient.LOGGER.warn("Copied profile '{}' to '{}', but failed to remove the old file", sourceName, targetName);
+        try {
+            Files.move(file(sourceName).toPath(), file(targetName).toPath());
+            return true;
+        } catch (IOException e) {
+            CacaoVisualClient.LOGGER.error("Failed to rename profile {}", sourceName, e);
+            return false;
         }
-
-        return true;
     }
 
-    private Profile loadMetadata(File file) {
-        try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
-            final JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            final String fallbackName = file.getName().substring(0, file.getName().length() - 5);
-            final String name = root.has("name") ? root.get("name").getAsString() : fallbackName;
-
-            if (!ProfileNames.isValid(name)) {
-                throw new IllegalStateException("Profile name is not a valid file name");
-            }
-
-            return new Profile(name, List.of());
-        } catch (IOException | RuntimeException e) {
-            CacaoVisualClient.LOGGER.error("Skipping unreadable profile: {}", file.getName(), e);
-            return null;
-        }
+    private File file(String name) {
+        return new File(directory, name + ".json");
     }
 }

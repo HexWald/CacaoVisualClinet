@@ -68,7 +68,6 @@ public class ProfileTypeAdapter implements JsonSerializer<Profile>, JsonDeserial
             throw new JsonParseException("Missing profile modules");
         }
 
-        final List<Module> enabledModules = new ArrayList<>();
         final List<Runnable> changes = new ArrayList<>();
         final List<Runnable> toggles = new ArrayList<>();
 
@@ -101,14 +100,11 @@ public class ProfileTypeAdapter implements JsonSerializer<Profile>, JsonDeserial
                 changes.add(() -> hud.move(x, y));
             }
 
-            if (enabled) {
-                enabledModules.add(module);
-            }
         }
 
         changes.forEach(Runnable::run);
         toggles.forEach(Runnable::run);
-        return new Profile(name, enabledModules);
+        return new Profile(name);
     }
 
     private static <T> Runnable readSetting(Setting<T> setting, JsonElement json) {

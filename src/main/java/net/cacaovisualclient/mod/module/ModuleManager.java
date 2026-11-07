@@ -59,9 +59,4 @@ public class ModuleManager {
                 .toList();
     }
 
-    public List<Module> getEnabledModules() {
-        return modules.values().stream()
-                .filter(Module::isEnabled)
-                .toList();
-    }
 }

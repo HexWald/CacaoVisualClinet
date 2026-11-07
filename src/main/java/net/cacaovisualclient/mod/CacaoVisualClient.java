@@ -93,7 +93,7 @@ public class CacaoVisualClient implements ClientModInitializer {
             configStorage = new ConfigStorage();
             configManager = new ConfigManager(configStorage);
             profileStorage = new ProfileStorage(moduleManager);
-            profileManager = new ProfileManager(getConfig(), profileStorage, moduleManager);
+            profileManager = new ProfileManager(getConfig(), profileStorage);
 
             final String configuredTheme = getConfig().getSelectedTheme();
 

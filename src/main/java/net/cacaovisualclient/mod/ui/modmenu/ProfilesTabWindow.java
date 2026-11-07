@@ -233,9 +233,8 @@ public class ProfilesTabWindow extends Window {
                 }
 
                 if (MouseUtils.isMouseOver(mouseX, mouseY, rowSaveX(), rowY + 7, 38, BUTTON_HEIGHT)) {
-                    profileManager.saveProfile(profile.getName());
-                    CacaoVisualClient.getInstance().save();
-                    setStatus("Saved " + profile.getName());
+                    setStatus(profileManager.saveProfile(profile.getName())
+                            ? "Saved " + profile.getName() : "Could not save " + profile.getName());
                     return;
                 }
 
@@ -257,9 +256,8 @@ public class ProfilesTabWindow extends Window {
         }
 
         private void saveCurrentProfile() {
-            profileManager.saveCurrentProfile();
-            CacaoVisualClient.getInstance().save();
-            setStatus("Saved " + getActiveProfileName());
+            setStatus(profileManager.saveCurrentProfile()
+                    ? "Saved " + getActiveProfileName() : "Could not save profile");
         }
 
         private void createProfile() {
@@ -291,7 +289,7 @@ public class ProfilesTabWindow extends Window {
                 return;
             }
 
-            CacaoVisualClient.getInstance().save();
+            CacaoVisualClient.getInstance().getConfigManager().save();
             setStatus("Loaded " + profile.getName());
         }
 
