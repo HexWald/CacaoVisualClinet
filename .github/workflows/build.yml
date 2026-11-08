@@ -36,10 +36,6 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
           name: CacaoVisualClient
@@ -50,5 +46,13 @@ jobs:
           version="${GITHUB_REF_NAME#v}"
           jar="CacaoVisualClient-$version.jar"
           test -f "$jar"
-          gh release create "$GITHUB_REF_NAME" "$jar" \
-            --verify-tag --notes-from-tag --title "CacaoVisualClient $version"
+          tag_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$GITHUB_REF_NAME" \
+            --jq 'select(.object.type == "tag") | .object.sha')
+          if [ -z "$tag_sha" ]; then
+            echo "Use an annotated tag with release notes."
+            exit 1
+          fi
+          notes="$RUNNER_TEMP/release-notes.md"
+          gh api "repos/$GITHUB_REPOSITORY/git/tags/$tag_sha" --jq .message > "$notes"
+          gh release create "$GITHUB_REF_NAME" "$jar" --repo "$GITHUB_REPOSITORY" \
+            --verify-tag --notes-file "$notes" --title "CacaoVisualClient $version"
